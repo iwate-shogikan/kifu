@@ -1,4 +1,5 @@
 ---
-title: Welcome to my blog
+title: ようこそ、将棋のホームページへ
 ---
 
+ここでは動く棋譜を紹介したい！

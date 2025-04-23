@@ -20,6 +20,13 @@ _Create a site or blog from your GitHub repositories with GitHub Pages._
 
 ## Finish
 
+## 🌐 公開中のブログ
+
+🎉 このリポジトリで作ったブログは、以下のURLから見られます！
+
+👉 [https://hitoshikudo711.github.io/skills-github-pages/](https://hitoshikudo711.github.io/skills-github-pages/)
+
+
 _Congratulations friend, you've completed this course!_
 
 <img src=https://octodex.github.com/images/constructocat2.jpg alt=celebrate width=300 align=right>

@@ -6,6 +6,11 @@
   In your repository settings: enable template repository, add your 1280×640 social image, auto delete head branches.
   Add your open source license, GitHub uses MIT license.
 -->
+## 🌐 公開中のブログ
+
+🎉 このリポジトリで作ったブログは、以下のURLから見られます！
+
+👉 [https://hitoshikudo711.github.io/skills-github-pages/](https://hitoshikudo711.github.io/skills-github-pages/)
 
 # GitHub Pages
 
@@ -19,13 +24,6 @@ _Create a site or blog from your GitHub repositories with GitHub Pages._
 -->
 
 ## Finish
-
-## 🌐 公開中のブログ
-
-🎉 このリポジトリで作ったブログは、以下のURLから見られます！
-
-👉 [https://hitoshikudo711.github.io/skills-github-pages/](https://hitoshikudo711.github.io/skills-github-pages/)
-
 
 _Congratulations friend, you've completed this course!_
 

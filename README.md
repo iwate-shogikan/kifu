@@ -10,7 +10,7 @@
 
 🎉 このリポジトリで作ったブログは、以下のURLから見られます！
 
-👉 [https://hitoshikudo711.github.io/skills-github-pages/](https://hitoshikudo711.github.io/skills-github-pages/)
+👉 [https://hitoshikudo711.github.io/shogi-kifu/](https://hitoshikudo711.github.io/shogi-kifu/)
 
 # GitHub Pages
 

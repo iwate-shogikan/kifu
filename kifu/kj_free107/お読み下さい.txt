@@ -1,0 +1,10 @@
+棋譜再現・中継 JavaScript アプリケーション Kifu for JavaScript Free
+
+
+使い方は、kifu_js_free_man.html をご覧下さい。
+
+本ソフトウェアや付属のファイルの著作権は、柿木義一にあります。 
+
+Copyright (C) 2020, 柿木　義一
+
+

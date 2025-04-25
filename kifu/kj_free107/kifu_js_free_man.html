@@ -1,0 +1,610 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Style-Type" content="text/css">
+<TITLE>Kifu for JavaScript Free Manual</TITLE>
+<STYLE type="text/css">
+<!--
+H2{
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  		
+				
+				
+				
+				
+  background-color : #ffff80;
+border-color : green yellow green yellow;
+  border-top-width : 1px;
+  border-top-style : solid;
+  border-bottom-width : 1px;
+  border-bottom-style : solid;
+  font-size : 14pt;
+}
+BLOCKQUOTE{
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  		
+				
+				
+				
+				
+  background-color : #f5f5f5;
+border-width : 1px 1px 1px 1px;border-style : solid solid solid solid;
+  
+  
+  
+  
+  padding-top : 5px;
+  padding-left : 5px;
+  padding-right : 5px;
+  padding-bottom : 5px;
+}
+H1{
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  		
+				
+				
+				
+				
+  font-size : 18pt;
+}
+LI{
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  
+
+  line-height : 130%;
+}
+BODY{
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  line-height : 120%;
+}
+-->
+</STYLE>
+</HEAD>
+<BODY>
+<H1 align="center">将棋棋譜中継・再現 JavaScript アプリケーション &quot;<FONT color="#008000">Kifu for JavaScript</FONT> <FONT color="#0000ff">Free</FONT>&quot;（フリー版）</H1>
+<P align="right">2023/9/26 柿木　義一</P>
+<H2>１．ソフトの概要</H2>
+<P>Web上で将棋の棋譜や詰将棋の中継・再現を行う JavaScript アプリケーションです。</P>
+<H3>特徴：</H3>
+<UL>
+  <LI>柿木形式の棋譜ファイル(*.kif, *.kifu)とCSA形式の棋譜を直接再現します。
+  <LI>平手、駒落ちの棋譜に対応しています。
+  <LI>各指し手のコメントを表示します（オプションで表示なし可<FONT color="#ff0000">→未実装</FONT>）。
+  <LI>変化手順を再現できます。
+  <LI>棋譜ファイルを保存できます。
+  <LI>自動更新が可能で、対局の中継ができます。
+  <LI>キーボードで再現可能
+  <LI>盤面のタップで再現可能
+  <LI>棋戦名、場所、持ち時間、消費時間、残り時間を表示できます。
+  <LI>高解像度の表示に対応
+  <LI>将棋盤は、木目・無地切り替え可能。
+  <LI>コメント文字の大きさを設定可
+  <LI>駒音の有無を設定可能（設定を記憶）
+  <LI>言語環境が日本語・中国語でないとき、英語で表記する。<FONT color="#ff0000">→未実装</FONT>
+</UL>
+
+<H2>２．制限</H2>
+<UL>
+  <LI>KI2形式には対応していません。
+  <LI>CSA 形式の棋譜は、正しく読めない場合があります。
+  <LI>棋譜ファイルをサーバへ転送できないプロバイダでは、拡張子を txt に変えて下さい。
+  <LI>棋譜の最大手数は、変化を含め、1600手です。
+  <LI><FONT color="#ff0000">JavaScript の制限で、PC上では、実行できません。</FONT>
+  <LI><FONT color="#ff0000">ブログ等では、正しく表示できない場合があります。</FONT>
+</UL>
+<H2>３．動作環境</H2>
+<H3>HTML 5</H3>
+<H3>動作確認ブラウザ：</H3>
+<H4>Windows:</H4>
+<UL>
+  <LI>Firefox
+  <LI>Chrome
+  <LI>Microsoft Edge
+</UL>
+<H4>Mac</H4>
+<UL>
+  <LI>Safari
+  <LI>Firefox
+  <LI>Chrome
+</UL>
+<H4>iOS</H4>
+<UL>
+  <LI>Safari
+</UL>
+<H4>Android</H4>
+<UL>
+  <LI>Chrome
+</UL>
+<H2>４．ファイルの構成</H2>
+<H3>(1) 動作に必要なファイル</H3>
+<H4>kj_free/ のディレクトリ</H4>
+<TABLE border="1">
+  <TBODY>
+    <TR>
+      <TD>&nbsp;kj_free/kj_free.js</TD>
+      <TD>&nbsp;JavaScript アプリケーション</TD>
+    </TR>
+    <TR>
+      <TD>&nbsp;kj_free/free_help.html</TD>
+      <TD>&nbsp;HELPファイル</TD>
+    </TR>
+    <TR>
+      <TD>&nbsp;kj_free/*.gif, *.jpg, *.png</TD>
+      <TD>&nbsp;画像</TD>
+    </TR>
+    <TR>
+      <TD>&nbsp;kj_free/*.mp3</TD>
+      <TD>&nbsp;サウンド</TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<H3>(2) データ等</H3>
+<TABLE border="1">
+  <TBODY>
+    <TR>
+      <TD>&nbsp;example_free.html</TD>
+      <TD>&nbsp;使用例</TD>
+    </TR>
+    <TR>
+      <TD>&nbsp;henka.kif</TD>
+      <TD>&nbsp;変化手順のある棋譜の例</TD>
+    </TR>
+    <TR>
+      <TD>&nbsp;no_henka.kif</TD>
+      <TD>&nbsp;変化手順のない棋譜の例</TD>
+    </TR>
+    <TR>
+      <TD>&nbsp;tume.kif</TD>
+      <TD>&nbsp;詰将棋の例</TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<H2>５．設置法</H2>
+<H3>(1) ファイル</H3>
+<UL>
+  <LI>サーバ上で、JavaScript を使用するディレクトリ <B>kj_free/</B> を作成します。
+  <LI>ここに、フォルダ<B> kj_free/</B> 内の全ファイルを転送します。<BR clear="">
+  これらのファイルは、バイナリモードで転送しなければいけません。
+</UL>
+<H3>(2) HTMLファイル(1)</H3>
+<P>添付の example_free.html を元に、以下のように記述します。<BR>
+文字コードは、<B>UTF-8</B> とします。</P>
+
+<BLOCKQUOTE>&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;<BR>
+<FONT color="#0000ff">// 指定が必要</FONT><BR>
+<FONT color="#0000ff">// kj_free.js のディレクトリィ：サーバ上の絶対位置、または、html ファイルからの相対位置<BR clear="none">
+// 最後に/を付ける</FONT><BR clear="none">
+const KJ_DIR = &quot;/test_kakinoki/kj_free/&quot;; <FONT color="#0000ff">// 絶対位置で指定</FONT><BR>
+//const KJ_DIR = &quot;./kj_free/&quot;; <FONT color="#0000ff">// html のディレクトリィに kj_free/ がある場合</FONT><BR>
+<BR>
+<FONT color="#0000ff">// 棋譜ファイル名：サーバ上の絶対位置、または、 html ファイルからの相対位置</FONT><BR>
+const KIF_FILE_NAME = &quot;henka.kif&quot;;<BR>
+<BR>
+// const KJ_LEFT = true; <FONT color="#0000ff">// 左寄せ表示の場合、左端の // を削除</FONT><BR>
+<BR>
+const UPDATE_TIME = 1; <FONT color="#0000ff">// 自動更新の初期設定 0:自動更新しない, 1:30秒毎</FONT><BR>
+<BR>
+const COMMENT_LINE = 2; <FONT color="#0000ff">// コメント行数：0だと、コメントを表示しません。</FONT><BR>
+<BR>
+<FONT color="#0000ff">// ページを開いた時の手数指定</FONT><BR>
+// const START_TESUU = 10; <FONT color="#0000ff">// 10手の局面を表示</FONT><BR>
+// const START_TESUU = &quot;LAST&quot;; <FONT color="#0000ff">// 最終局面を表示</FONT><BR>
+&lt;/script&gt;<BR>
+<P><FONT color="#0000ff">&lt;!- kj._freejs をディレクトリィ付きで指定、サーバ上の絶対位置、または、 html ファイルからの相対位置 -&gt;</FONT><BR clear="none">
+&lt;script src=&quot;/test_kakinoki/kj_free/kj_free.js&quot;&gt;&lt;/script&gt;</P>
+<FONT color="#0000ff"> </FONT></BLOCKQUOTE>
+<UL>
+  <LI>ファイル名は、サーバ上の絶対位置、HTMLファイルのあるディレクトリからの相対表現とします。
+  <LI>ファイル名に日本語を使ってはいけません。
+  <LI>ファイル名の大文字と小文字の違いがあってはいけません。
+  <LI>パラメータ名はすべて大文字です。
+  <LI>HTMLファイルのURL に &quot;?te=手数&quot; を付けると、その手数の局面を表示します。
+</UL>
+<H3>(3) HTMLファイル(2)</H3>
+<P>ブログ等、レイアウトが複雑な場合は、次のように表示する <FONT color="#ff0000">div タグ（id=&quot;KJ_DIV&quot;）</FONT>を記述することが必要な場合があります。</P>
+<BLOCKQUOTE><FONT color="#0000ff">&lt;!-- 表示する DIV を指定する場合 --&gt;</FONT><FONT color="#ff0000"><BR clear="none">
+&lt;div id=&quot;KJ_DIV&quot; &gt;&lt;/div&gt;</FONT><BR>
+&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;<BR>
+<FONT color="#0000ff">// 指定が必要</FONT><BR>
+<FONT color="#0000ff">// kj_free.js のディレクトリィ：サーバ上の絶対位置、または、html ファイルからの相対位置<BR clear="none">
+// 最後に/を付ける</FONT><BR clear="none">
+const KJ_DIR = &quot;/test_kakinoki/kj_free/&quot;; <FONT color="#0000ff">// 絶対位置で指定</FONT><BR>
+//const KJ_DIR = &quot;./kj_free/&quot;; <FONT color="#0000ff">// html のディレクトリィに kj_free/ がある場合</FONT><BR>
+<BR>
+<FONT color="#0000ff">// 棋譜ファイル名：サーバ上の絶対位置、または、 html ファイルからの相対位置</FONT><BR>
+const KIF_FILE_NAME = &quot;henka.kif&quot;;<BR>
+<BR>
+// const KJ_LEFT = true; <FONT color="#0000ff">// 左寄せ表示の場合、左端の // を削除</FONT><BR>
+<BR>
+const UPDATE_TIME = 1; <FONT color="#0000ff">// 自動更新の初期設定 0:自動更新しない, 1:30秒毎</FONT><BR>
+<BR>
+<FONT color="#0000ff">// ページを開いた時の手数指定</FONT><BR>
+// const START_TESUU = 10; <FONT color="#0000ff">// 10手の局面を表示</FONT><BR>
+// const START_TESUU = &quot;LAST&quot;; <FONT color="#0000ff">// 最終局面を表示</FONT><BR>
+&lt;/script&gt;<BR>
+<FONT color="#0000ff">&lt;!- kj._freejs をディレクトリィ付きで指定、サーバ上の絶対位置、または、 html ファイルからの相対位置 -&gt;</FONT><BR clear="none">
+&lt;script src=&quot;/test_kakinoki/kj_free/kj_free.js&quot;&gt;&lt;/script&gt;<BR clear="none">
+</BLOCKQUOTE>
+<H3>(4) 起動パラメータ</H3>
+<TABLE border="1" width="100%">
+  <TBODY>
+    <TR bgcolor="#e4fec9">
+      <TH>機能</TH>
+      <TH>パラメータ</TH>
+      <TH>説明</TH>
+    </TR>
+    <TR>
+      <TD>&nbsp;kj_free/ のディレクトリ</TD>
+      <TD>&nbsp;const <B>KJ_DIR</B> = &quot;ディレクトリ/kj_free/&quot;;</TD>
+      <TD>&nbsp;kj_free/ のディレクトリ</TD>
+    </TR>
+    <TR>
+      <TD>&nbsp;左寄せ</TD>
+      <TD>&nbsp;const <B>KJ_LEFT</B> = true;</TD>
+      <TD>左の記述で、盤面を左寄せで表示する。<BR>
+      左の記述が無い場合、中央に表示する(false)。</TD>
+    </TR>
+    <TR>
+      <TD>棋譜ファイル名</TD>
+      <TD>&nbsp;const <B>KIF_FILE_NAME</B> = &quot;（棋譜ファイル名）&quot;;</TD>
+      <TD>棋譜ファイル名<BR>
+      サーバ上の絶対位置、または、HTMLファイルのあるディレクトリからの相対表現とします。<BR clear="none">
+      http: での指定もできます。<BR>
+      棋譜ファイルとHTMLファイルは同じサーバにある必要があります。<BR>
+      拡張子が .kifu なら、文字コードをUTF-8 とします。Unicode の文字でコメント等を書くことができます。Kifu for Windows
+      は、V7以降を使います。</TD>
+    </TR>
+    <TR>
+      <TD>開始手数</TD>
+      <TD>&nbsp;const <B>START_TESUU</B>=<FONT color="#000099">（手数）</FONT></TD>
+      <TD>ページを開いたとき、指定手数の局面を表示します。<BR>
+  （手数）は半角数字、&quot;<FONT color="#000000"><FONT color="#000000"><B>LAST</B></FONT></FONT>&quot;で最終局面<BR>
+      指定しないとき、終局していれば、初期局面、それ以外では最終局局面を表示します。</TD>
+    </TR>
+    <TR>
+      <TD>自動更新</TD>
+      <TD>&nbsp;const <B>UPDATE_TIME</B> = 1; 30秒毎に自動更新する<BR clear="">
+  <B>UPDATE_TIME</B>=2; 60秒毎に自動更新する<BR>
+  <B>UPDATE_TIME</B>=3; ３分毎に自動更新する<BR>
+      <B>UPDATE_TIME</B>=0; 自動更新メニューを表示しますが、自動更新はしません。</TD>
+      <TD>一定時間毎に棋譜ファイルを読み込み、最新の棋譜を表示する自動更新機能です。<BR>
+      対局の中継等で使用します。<BR clear="none">
+      <B>UPDATE_TIME</B>の記述がないとき、自動更新の選択を表示しません。<BR>
+      <FONT color="#ff0000">※<B>UPDATE_TIME</B> を記述すると、自動更新設定の選択を表示します。また、<B>START_TESUU</B> の指定がないとき、自動更新時、最終局面を表示します。</FONT></TD>
+    </TR>
+    <TR>
+      <TD>コメント行数</TD>
+      <TD>const <B>COMMENT_LINE</B>=(行数) <BR>
+      (行数) は半角数字</TD>
+      <TD>コメント行数を指定します。<BR>
+      0だと、コメントを表示しません。<BR>
+      指定なしは、5行となります。</TD>
+    </TR>
+    <TR>
+      <TD></TD>
+      <TD></TD>
+      <TD></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<UL>
+  <LI><B>//</B> で始まる行はコメントです。
+  <LI><FONT color="#ff0000">自動更新時の特殊な動作について<BR clear="">
+  </FONT><FONT color="#000000">自動更新ありで、本アプリケーション起動時に棋譜を読み込んだとき、終局していたら、開始局面を表示し、自動更新もなしにします。</FONT>
+  <LI>URL に &quot;?te=手数&quot; を付けた場合、<B>START_TESUU</B> より優先されます。
+  <LI>変化手順の表示<BR>
+  棋譜に変化手順があるとき、変化選択のボタン[+&lt;] [&gt;+] と変化の選択メニューを表示します。
+</UL>
+<UL>
+</UL>
+<H3>(5) 対局中継例：</H3>
+<P>30秒毎に自動更新、自動更新設定メニュー表示、最終局面表示</P>
+
+<BLOCKQUOTE>
+<P>&lt;script language=&quot;javascript&quot; type=&quot;text/javascript&quot;&gt;<BR clear="none">
+const KJ_DIR = &quot;/test_kakinoki/kj_free/&quot;; <FONT color="#0000ff">// kj_free.js のディレクトリィ</FONT><BR clear="none">
+const KIF_FILE_NAME = &quot;joryu_ouza202005160101.kif&quot;; <FONT color="#0000ff">// 棋譜ファイル</FONT><BR clear="none">
+const UPDATE_TIME = 1; <FONT color="#0000ff">// 自動更新 30秒毎</FONT><BR clear="none">
+&lt;/script&gt;<BR clear="none">
+&lt;script src=&quot;/test_kakinoki/kj_free/kj_free.js&quot;&gt;&lt;/script&gt;</P>
+</BLOCKQUOTE>
+<H2>６．棋譜ファイル</H2>
+<P>棋譜ファイルは、フリーソフトの Kifu for Windows、または、柿木将棋等で作成できます。<BR clear="none">
+拡張子が <B>.kif</B> は、<B>SHIFT JIS</B> の文字コードです。<BR clear="none">
+拡張子が <B>.kifu</B> は、<B>UTF-8</B> の文字コードです。</P>
+<P>チェスクロック使用かストップウォッチかは、消費時間から自動判別します。秒の単位の時間があれば、チェスクロックとし、秒単位で時間を表示します。</P>
+<P>平手の初期配置から始まる CSA 形式の棋譜も読めます（読めない場合もあります）。</P>
+<H2>７．情報の表示</H2>
+<P>右上の欄には、次の情報を表示します。</P>
+<BLOCKQUOTE>開始日時 　<BR>
+棋戦名　　　　　<BR>
+場所　　　　　　<BR>
+持ち時間<BR clear="none">
+<BR clear="none">
+<BR clear="none">手合割　<FONT color="#0000ff">（駒落ちの場合）</FONT></BLOCKQUOTE>
+<H2>８．詰将棋情報の表示</H2>
+<P>棋譜に詰将棋情報の「作者」が設定されているとき、次の情報を表示します。</P>
+<BLOCKQUOTE>作者<BR>
+作品名<BR>
+出典 or 発表誌<BR>
+発表年月<BR>
+持ち駒制限（持ち駒制限時）</BLOCKQUOTE>
+<H2>９．残り時間の表示</H2>
+<P>
+  残り時間を表示するためには、棋譜ファイルの棋譜情報で、「持ち時間」を設定する必要があります。<BR clear="">
+持ち時間は、全角（または半角で）で「Ｎ時間」と記述します。分がある場合は、半角２桁で「NN分」と記述します。<BR>「各＊時間」という書き方にも対応しています。</P>
+<P>
+
+<BR>
+棋譜の指し手に消費時間が記録されているとき、各指し手の消費時間から残り時間を計算し、表示します。<BR>チェスクロック使用かストップウォッチかは、消費時間から自動判別します。秒の単位の時間があれば、チェスクロックとし、秒単位で時間を表示します。消費時間のグラフは分単位で表示します。<BR>
+棋譜の指し手に消費時間が記録されていないとき（すべての指し手の時間が０の場合）、棋譜情報の「消費時間」の情報から、手数と残り時間を表示します。<BR>
+消費時間は、次の形式で記述します。</P>
+<BLOCKQUOTE><FONT color="#000099">手数▲先手の消費時間（分）△後手の消費時間（分）</FONT><BR clear="">
+※いずれも半角の数字を使います。</BLOCKQUOTE>
+<BLOCKQUOTE>例：<BR>
+---------- 棋譜ファイル --------------<BR>
+消費時間：159▲347△359<BR>
+持ち時間：４時間06分<BR>
+-----------------------------------</BLOCKQUOTE>
+<UL>
+  <LI>一手毎の時間が入力されていて、投了等を選択したとき、消費時間の手数表示部分を「終局」と表示します。
+  <LI>一手毎の時間が未入力・かつ終局した棋譜で、終局の手数の場合、消費時間の手数表示部分を「終局」と表示します。
+</UL>
+<H2>10．コメント</H2>
+<P>コメントに※（感想）があるとき、棋譜の * を # と表示します。</P>
+<P>URL をリンクにします。</P>
+<P>コメントに HTML のサブセットが使えます。例えば、次が使えます</P>
+<BLOCKQUOTE>&lt;FONT color=&quot;#ff0000&quot;&gt;赤&lt;/FONT&gt;<BR>
+&lt;B&gt;ボールド&lt;/B&gt;</BLOCKQUOTE>
+<H2>11．スタイルシートによる表示の変更</H2>
+<P>スタイルシート(CSS)によって、表示を変更できます。</P>
+<H3>背景の色</H3>
+<BLOCKQUOTE>canvas {<BR>
+background: #ECECEC !important;<BR>
+}</BLOCKQUOTE>
+<H2>12．うまくいかないとき</H2>
+<UL>
+  <LI>棋譜ファイルの位置を絶対指定で読めない場合は、相対指定をお試し下さい。
+</UL>
+<H3>確認項目</H3>
+<UL>
+  <LI>html ファイルは、<B>UTF-8</B> の文字コードになっているでしょうか？
+  <LI>ファイル名の大文字と小文字の違いがないですか？
+  <LI>棋譜ファイルの文字コードは正しいしょうか？　kif は、SHIFT-JIS。kifu は <B>UTF-8</B>。
+</UL>
+<H3>コンソール</H3>
+<P>エラー等は、ブラウザのコンソールに表示されます。</P>
+<H3>バージョンアップしたとき</H3>
+<P>本アプリケーションをバージョンアップし、サーバ上の JavaScript を更新したとき、ブラウザを再起動しないと反映されません。<BR>
+ブラウザのキャッシュを削除しないと、それが反映されない場合があります。<BR>
+FireFox3.0なら、次の操作でキャッシュを削除できます。</P>
+<OL>
+  <LI>ツールメニューのオプションを実行
+  <LI>詳細タブを表示
+  <LI>オフラインデータの今すぐ消去を実行
+</OL>
+<H3>棋譜保存ボタンを押しても保存できない場合</H3>
+<UL>
+  <LI>ツール等でポップアップを抑制しているときは、解除して下さい。
+  <LI>Internet Explorer では、「インターネットオプション」の「セキュリティの設定」で、「ファイルのダウンロード時に自動的にダイアログを表示」を「有効にする」としてみて下さい。
+  <LI>Ctrlキーを押しながら、棋譜保存ボタンを押してみて下さい。
+</UL>
+<H2>13．履歴</H2>
+
+
+<H3>2020/12/4 V0.51β</H3>
+<UL>
+  <LI>最初のβ版を公開
+</UL>
+<H3>2020/12/7 V0.60β</H3>
+<UL>
+  <LI>消費時間と残り時間を表示
+  <LI>設定に木目を追加
+  <LI>棋譜にツールチップを設定
+  <LI><FONT color="#ff0000">CSA形式の棋譜が正しく読めなかった問題を修正</FONT>
+  <LI><FONT color="#ff0000">設定画面がずれる場合があった問題を修正</FONT>
+</UL>
+<H3>2020/12/27 V0.90β</H3>
+<UL>
+  <LI><FONT color="#0000ff">コメントの　URL をリンクにする。</FONT>
+  <LI><FONT color="#0000ff">コメント文字の大きさを設定可能に</FONT>
+  <LI><FONT color="#0000ff">棋譜の表示を改善</FONT>
+  <LI><FONT color="#ff0000">消費時間が持ち時間を超える場合があった問題を修正</FONT>
+  <LI><FONT color="#ff0000">盤面クリックにより進める・戻すが正しくない場合があった問題を修正</FONT>
+</UL>
+<H3>2021/1/4 V0.92β</H3>
+<UL>
+  <LI><FONT color="#ff0000">Windows の Chrome でコメント欄に水平スクロールバーが表示される場合があった問題を修正</FONT>
+  <LI><FONT color="#ff0000">iOS で、棋譜等がずれる場合があった問題を修正</FONT>
+  <LI><FONT color="#ff0000">盤面クリックによる進める・戻すが正しくない場合があった問題を修正</FONT>
+</UL>
+<H3>2021/1/5 V0.93β</H3>
+<UL>
+<LI><FONT color=#ff0000>一部の棋譜が読めなかった問題を修正</FONT> </LI>
+</UL>
+<H3>2021/2/4 V0.96β</H3>
+<UL>
+  <LI>手が進んだ時、棋譜の色を変える
+  <LI><FONT color="#ff0000">棋譜保存ボタンの位置が正しくない場合があった問題を修正</FONT>
+  <LI><FONT color="#ff0000">表示がずれる場合があった問題を修正</FONT>
+</UL>
+<H3>2021/2/6 V0.97β</H3>
+<UL>
+  <LI><FONT color="#ff0000">棋譜ファイル名を http で指定したとき、読めなかった問題を修正</FONT>
+  <LI>DIV タグで表示位置を指定する記述方法
+</UL>
+<H3>2022/11/12 V1.01</H3>
+<UL>
+  <LI><FONT color="#ff0000">連続で進めたり、戻したりした後、逆方向のボタンを押せなくなった場合があったバグを修正</FONT>
+  <LI><FONT color="#ff0000">設定が保存されない場合があった問題を修正</FONT>
+  <LI>ボタンにツールチップスを設定
+</UL>
+<H3>2022/11/24 V1.02</H3>
+<UL>
+  <LI><FONT color="#ff0000">詰将棋の棋譜が正しく読めない場合があった問題を修正</FONT>
+</UL>
+<H3>2022/11/24 V1.03</H3>
+<UL>
+  <LI>出典がなければ、発表誌を表示
+</UL>
+<H3>2023/4/9 V1.04 </H3>
+<UL>
+  <LI>詰将棋の持ち駒制限を表示
+  <LI>後手が初手を指した場合、２手指しの場合、反則勝ちの手番を修正
+  <LI>小さい画像を不要にした。
+</UL>
+<H3>2023/4/10 V1.05</H3>
+<UL>
+  <LI>CSA棋譜のコメントを表示しなかった問題を修正
+  <LI>升目を鮮明にした。
+</UL>
+<H3>2023/9/20 V1.06</H3>
+<UL>
+  <LI>将棋倶楽部24の棋譜に対応
+  <LI>CSA形式の棋譜の３行以上のマルチステートメントに対応
+  <LI>手を進めたり、戻りしたりした時、消費時間表示を更新しなかった問題を修正
+  <LI>棋戦を切らない
+  <LI>ヘルプのミスを修正・改定
+</UL>
+<H3>2023/9/26 V1.07</H3>
+<UL>
+  <LI>棋譜が読めない場合があった問題を改善
+  <LI>コメント行数指定オプション COMMENT_LINE を追加。0 だと、コメントを表示しません。実際に表示される行数は、文字の大きさで変わります。
+</UL>
+</BODY>
+</HTML>

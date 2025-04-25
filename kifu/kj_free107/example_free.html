@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Style-Type" content="text/css">
+    <title>Kifu for JavaScript test</title>
+<STYLE type="text/css">
+<!--
+H1{  
+    
+    
+  font-size : 13pt;
+
+  border-bottom-width : 2px;
+  border-bottom-color : purple;
+
+  border-bottom-style : solid;
+}
+
+TEXTAREA{
+    
+    
+  font-size : 80%;
+  line-height : 140%;
+}
+
+-->
+</STYLE>
+</head>
+
+  <body>
+
+    <h1>Kifu for JavaScript Free の使用例</h1>
+
+
+<div id="KJ_DIV" style="width:580px;">
+  <!------------- JavaScript ----------->
+  <script language="javascript" type="text/javascript">
+    // で始まる行はコメント
+
+    // 指定が必要
+    // kj_free.js のディレクトリィ：サーバ上の絶対位置、または、html ファイルからの相対位置、最後に/
+    const KJ_DIR = "/test_kakinoki/kj_free/"; // 絶対位置で指定
+//  const KJ_DIR = "./kj_free/"; // 相対位置で指定 html のディレクトリィに kj_free/ がある場合
+
+    // 棋譜ファイル名：サーバ上の絶対位置、または、html ファイルからの相対位置
+    const KIF_FILE_NAME = "henka.kif";	// 分岐
+//    const KIF_FILE_NAME = "zukou-001.kif";	// 詰将棋
+//    const KIF_FILE_NAME = "http://kakinoki.o.oo7.jp/js/henka.kif"; // http:で指定
+
+    //--- Options
+    const COMMENT_LINE = 5; // コメント行数：0 だと、コメントを表示しません。
+
+    // 次の行をコメントにすると、自動更新の選択を表示しません。
+    const UPDATE_TIME = 1;  // 自動更新の初期設定  0:自動更新しない, 1:30秒毎
+
+　　//	const KJ_LEFT = true;	// 左寄せ表示の場合、左端の // を削除
+
+    // ページを開いた時の手数指定
+//    const START_TESUU = 10;	// 10手の局面を表示
+//    const START_TESUU = "LAST";	// 最終局面を表示
+  </script>
+
+  <!- kj_free.js をディレクトリィ付きで指定、サーバ上の絶対位置、または、 html ファイルからの相対位置 ->
+  <script src="/test_kakinoki/kj_free/kj_free.js"></script>
+</div>
+
+
+  </body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<META http-equiv="Content-Style-Type" content="text/css">
+    <title>Kifu for JavaScript Free Help</title>
+<STYLE type="text/css">
+<!--
+H2{
+    
+    
+    
+    
+  font-size : 15pt;
+}
+
+H1{
+    
+    
+    
+    
+  font-size : 16pt;
+}
+H2{
+    
+    
+    
+  background-color : #ffff80;
+border-color : green yellow green yellow;
+  border-top-width : 1px;
+  border-top-style : solid;
+  border-bottom-width : 1px;
+  border-bottom-style : solid;
+  font-size : 14pt;
+}
+
+-->
+</STYLE>
+</head>
+
+    <body>
+<H1 align="center"><FONT color="#009900">Kifu for JavaScript </FONT><FONT color="#0000ff">Free</FONT> Help</H1>
+<H2>１．本アプリケーションについて</H2>
+<P>Web上で将棋の棋譜を再現する JavaScript アプリケーションです。</P>
+<H2>２．ボタン</H2>
+<TABLE border="1" cellpadding="2">
+  <TBODY>
+    <TR>
+      <TH>名前</TH>
+      <TH>動作</TH>
+    </TR>
+    <TR>
+      <TD align="center">＞</TD>
+      <TD>１手進めます。</TD>
+    </TR>
+    <TR>
+      <TD align="center">＜</TD>
+      <TD>１手戻します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">＞＞</TD>
+      <TD>連続的に進めます。</TD>
+    </TR>
+    <TR>
+      <TD align="center">＜＜</TD>
+      <TD>連続的に戻します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">＞｜</TD>
+      <TD>最終局面を表示します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">｜＜</TD>
+      <TD>開始局面を表示します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">■</TD>
+      <TD>連続的な進める、または、戻すを停止します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">＞＋</TD>
+      <TD>次の分岐へ進めます。</TD>
+    </TR>
+    <TR>
+      <TD align="center">＋＜</TD>
+      <TD>前の分岐へ戻します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">棋譜保存</TD>
+      <TD>棋譜ファイルをダウンロードします（または、開きます）。</TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<H2>３．キーボードでの操作</H2>
+<TABLE border="1" cellpadding="2">
+  <TBODY>
+    <TR>
+      <TH>キー</TH>
+      <TH>動作</TH>
+    </TR>
+    <TR>
+      <TD align="center">→</TD>
+      <TD>１手進めます。</TD>
+    </TR>
+    <TR>
+      <TD align="center">←</TD>
+      <TD>１手戻します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">End</TD>
+      <TD>最終局面を表示します。</TD>
+    </TR>
+    <TR>
+      <TD align="center">Home</TD>
+      <TD>開始局面を表示します。</TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<H2>４．タップ・マウスでの操作</H2>
+<TABLE border="1" cellpadding="2">
+  <TBODY>
+    <TR>
+      <TH>位置</TH>
+      <TH>動作</TH>
+    </TR>
+    <TR>
+      <TD align="center">７～９筋</TD>
+      <TD>１手進めます。</TD>
+    </TR>
+    <TR>
+      <TD align="center">１～３筋</TD>
+      <TD>１手戻します。</TD>
+    </TR>
+    <TR>
+      <TD align="center"></TD>
+      <TD></TD>
+    </TR>
+    <TR>
+      <TD align="center"></TD>
+      <TD></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<H2>５．棋譜</H2>
+<UL>
+  <LI>棋譜の指し手を選択すると、その局面を表示します。
+  <LI>コメントのある指し手には <FONT color="#ff0000">＊</FONT> が付きます。
+  <LI>コメントに※（感想）のある指し手には <FONT color="#ff0000">＃</FONT> が付きます。
+  <LI>マウスカーソルを合わせると、消費時間が表示されます（ツールチップ）。
+</UL>
+<H2>６．自動更新</H2>
+<P>棋譜を戻しているとき、自動更新されても表示局面を変更しません。駒音が鳴ります。<BR>
+最新の局面を表示していて、棋譜が自動更新されたときは、最新の局面を表示します。</P>
+<H2>７．最初の表示手数指定</H2>
+<P>HTMLファイルのURL に &quot;?te=手数&quot; を付けると、その手数の局面を表示します。</P>
+<H2>８．音声</H2>
+<P><FONT color="#ff0000">※Chrome では、画面をクリックしないと、音は出ません。</FONT></P>
+<P>FireFox は、デフォルトでは、自動再生がオフになっています。<BR clear="none">
+特定のサイトだけ、オンにできます。<BR clear="none">
+<A href="https://support.mozilla.org/ja/kb/block-autoplay">https://support.mozilla.org/ja/kb/block-autoplay</A></P>
+<HR>
+<P><A href="http://kakinoki.o.oo7.jp/js/kifujs.html">Kifu for JavaScript Free</A></P>
+<P>Copyright (C) 2020, 柿木　義一</P>
+</body>
+</html>

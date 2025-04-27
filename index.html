@@ -77,11 +77,14 @@ const UPDATE_TIME = 1;
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   KIF_FILE_NAME = select.value;
+
+  // 🔥 ビューア領域をリセットしてから読み込み
+  document.getElementById('KJ_DIV').innerHTML = "<div id='KJ_DIV'></div>";
   load_kifu();
 }
 
 window.onload = function() {
-  load_kifu();
+  load_kifu(); // 初回ロード
 };
 </script>
 

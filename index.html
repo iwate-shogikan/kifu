@@ -3,29 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <title>棋譜から学ぶやさしい将棋</title>
+  <style>
+    body {
+      background-color: #f4f4f4;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #2c3e50;
+      color: #ffffff;
+      padding: 1.5rem 0;
+      font-size: 2rem;
+    }
+    main {
+      padding: 2rem;
+    }
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+    }
+    #KJ_DIV {
+      margin-top: 2rem;
+    }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: #777;
+    }
+    p {
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
 
-<div style="text-align: center; font-family: Arial, sans-serif; color: #2c3e50;">
-  <h1>GitHub Pagesで柿木棋譜ビューアを使う</h1>
-  <p>好きな棋譜を選んで再生してみよう！</br>
-盤面の大きさはブラウザの表示の大小で調節してください</br>
-Windows Chromeブラウザの場合はCtl+ホイール上下</p>
-</div>
-  
-<!-- （ここにあとで棋譜ビューアを組み込む場所を作る） -->
-<!-- 棋譜を表示する場所 -->
-<div id="KJ_DIV"></div>
+<header>
+  棋譜から学ぶやさしい将棋
+</header>
 
-<!-- 変数設定 -->
+<main>
+  <h1>GitHub Pagesで柿木棋譜ビューアを使う</h1>
+
+  <p>
+    好きな棋譜を選んで再生してみよう！<br>
+    盤面の大きさはブラウザの表示倍率で調節してください<br>
+    （Windows Chromeの場合は Ctrl + マウスホイール上下）
+  </p>
+
+  <!-- 棋譜選択セレクトボックス -->
+  <select id="kifuSelector" onchange="onKifuSelect()">
+    <option value="test.kif">テスト棋譜</option>
+    <option value="henka.kif">henka</option>
+    <option value="example2.kif">例題2</option>
+  </select>
+
+  <!-- 棋譜ビューアの表示場所 -->
+  <div id="KJ_DIV"></div>
+</main>
+
+<footer>
+  &copy; 2025 優しい将棋プロジェクト
+</footer>
+
+<!-- 変数設定と棋譜切り替えスクリプト -->
 <script language="javascript" type="text/javascript">
-const KJ_DIR = "/shogi-kifu/kifu/kj_free107/kj_free/";
-const KIF_FILE_NAME = "test.kif";
+let KJ_DIR = "/shogi-kifu/";  // ファイルを直下に置いてる前提
+let KIF_FILE_NAME = "test.kif";
 const UPDATE_TIME = 1;
+
+function onKifuSelect() {
+  const select = document.getElementById('kifuSelector');
+  KIF_FILE_NAME = select.value;
+  load_kifu(); // 選んだ棋譜を再読み込み
+}
 </script>
 
 <!-- 本体jsを読み込む -->
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
+<script src="kj_free.js"></script>
 
 </body>
 </html>

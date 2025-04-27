@@ -65,7 +65,7 @@
 </main>
 
 <footer>
-  &copy; 2025 優しい将棋プロジェクト
+  &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
 <!-- 変数設定と棋譜切り替えスクリプト -->
@@ -79,6 +79,10 @@ function onKifuSelect() {
   KIF_FILE_NAME = select.value;
   load_kifu(); // 選んだ棋譜を再読み込み
 }
+  // 🔥 これを追加！！
+window.onload = function() {
+  load_kifu();
+};
 </script>
 
 <!-- 本体jsを読み込む -->

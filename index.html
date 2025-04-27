@@ -71,20 +71,30 @@
 <!-- 🔥 先に変数と関数を定義 -->
 <script language="javascript" type="text/javascript">
 let KJ_DIR = "/shogi-kifu/";  // ファイルは直下に置いている前提
-let KIF_FILE_NAME = "test.kif";
+let KIF_FILE_NAME = "test.kif"; // デフォルト棋譜
 const UPDATE_TIME = 1;
+
+// ページロード時にURLパラメータをチェック
+const urlParams = new URLSearchParams(window.location.search);
+const kifuParam = urlParams.get('kifu');
+if (kifuParam) {
+  KIF_FILE_NAME = kifuParam;
+  const selector = document.getElementById('kifuSelector');
+  if (selector) {
+    selector.value = kifuParam;
+  }
+}
 
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
-  KIF_FILE_NAME = select.value;
+  const selectedKifu = select.value;
 
-  // 🔥 ビューア領域をリセットしてから読み込み
-  document.getElementById('KJ_DIV').innerHTML = "<div id='KJ_DIV'></div>";
-  load_kifu();
+  // URLに棋譜ファイル名をつけてリロード
+  window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
 window.onload = function() {
-  load_kifu(); // 初回ロード
+  load_kifu();
 };
 </script>
 

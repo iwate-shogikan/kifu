@@ -68,26 +68,25 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 本体の kj_free.js を絶対パスで正しく読み込む -->
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
-
-<!-- その後に、自作の変数と関数 -->
+<!-- 🔥 先に変数と関数を定義 -->
 <script language="javascript" type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";  // ファイルを直下に置いてる前提
+let KJ_DIR = "/shogi-kifu/";  // ファイルは直下に置いている前提
 let KIF_FILE_NAME = "test.kif";
 const UPDATE_TIME = 1;
 
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   KIF_FILE_NAME = select.value;
-  load_kifu(); // セレクト変更時にロード
+  load_kifu();
 }
 
 window.onload = function() {
-  load_kifu(); // 初回ロード
+  load_kifu();
 };
 </script>
 
+<!-- 🔥 最後にkj_free.jsを読み込む -->
+<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
+
 </body>
 </html>
-

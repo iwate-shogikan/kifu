@@ -68,10 +68,10 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 本体jsを先に読み込む -->
+<!-- 本体jsを読み込む（絶対パスで正しく指定！） -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
-<!-- そのあとに変数設定とload_kifuを呼ぶ -->
+<!-- そのあとに変数設定とload_kifu -->
 <script language="javascript" type="text/javascript">
 let KJ_DIR = "/shogi-kifu/";
 let KIF_FILE_NAME = "test.kif";
@@ -80,10 +80,9 @@ const UPDATE_TIME = 1;
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   KIF_FILE_NAME = select.value;
-  load_kifu(); // 選んだ棋譜を再読み込み
+  load_kifu();
 }
 
-// 🔥 ここで初回load_kifu
 window.onload = function() {
   load_kifu();
 };

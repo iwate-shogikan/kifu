@@ -146,14 +146,14 @@ function onKifuSelect() {
 
 // window.onload でまとめて処理
 window.onload = function() {
-  load_kifu(); // 棋譜読み込み
-  const main = document.querySelector('main');
-  main.style.display = 'block';
+  load_kifu(); // 棋譜ビューアロード
   setTimeout(() => {
+    const main = document.querySelector('main');
+    main.style.display = 'block';
     main.style.opacity = '1';
     main.style.transform = 'translateY(0)';
-    document.getElementById('loader').style.display = 'none'; // ローディング非表示
-  }, 100);
+    document.getElementById('loader').style.display = 'none';
+  }, 500); // ← 500ミリ秒 (0.5秒) 遅らせる！
 };
 </script>
 

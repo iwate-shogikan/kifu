@@ -26,10 +26,6 @@
     }
 
     main {
-      display: none;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 1s ease-out, transform 1s ease-out;
       background: white;
       margin: 2rem auto;
       padding: 2rem;
@@ -85,11 +81,6 @@
 
 <body>
 
-<!-- ローディング画面 -->
-<div id="loader" style="position:fixed;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center;">
-  <p>Loading...</p>
-</div>
-
 <header>
   棋譜から学ぶやさしい将棋
 </header>
@@ -120,7 +111,7 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 変数と関数を先に定義 -->
+<!-- 変数と関数を定義 -->
 <script language="javascript" type="text/javascript">
 let KJ_DIR = "/shogi-kifu/";
 let KIF_FILE_NAME = "test.kif";
@@ -144,29 +135,13 @@ function onKifuSelect() {
 }
 </script>
 
-<!-- kj_free.jsを読み込む -->
+<!-- kj_free.js 読み込み -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
-<!-- フェードイン制御 -->
+<!-- ページロード時に棋譜読み込み -->
 <script>
 window.onload = function() {
-  load_kifu(); // 棋譜ビューアロード開始
-
-  const targetNode = document.getElementById('KJ_DIV');
-  const observer = new MutationObserver((mutationsList, observer) => {
-    if (targetNode.children.length > 0) { // 子要素ができたらOK
-      const main = document.querySelector('main');
-      main.style.display = 'block';
-      setTimeout(() => {
-        main.style.opacity = '1';
-        main.style.transform = 'translateY(0)';
-        document.getElementById('loader').style.display = 'none';
-      }, 100); // ちょっと遅延で滑らかに
-      observer.disconnect(); // 監視終了
-    }
-  });
-
-  observer.observe(targetNode, { childList: true, subtree: true });
+  load_kifu(); // 普通に即呼び出し
 };
 </script>
 

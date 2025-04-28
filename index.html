@@ -17,7 +17,6 @@
       padding: 0;
       text-align: center;
       font-size: 1rem;
-      overflow-x: hidden; /* ←はみ出し防止 */
     }
 
     header {
@@ -53,16 +52,7 @@
     }
 
     #KJ_DIV {
-      display: block;
-      overflow-x: auto;
-      max-width: 100%;
-      margin: 1rem auto 0 auto;
-      padding: 0;
-    }
-
-    #KJ_DIV img,
-    #KJ_DIV canvas {
-      max-width: none; /* ビューア内部は縮めない */
+      margin-top: 2rem;
     }
 
     footer {
@@ -116,8 +106,8 @@
 
   <p>
     好きな棋譜を選んで再生してみよう！<br>
-    スマホでは横スクロールできるよ！<br>
-    PCなら盤面の大きさは Ctrl + マウスホイール上下で調整できるよ！
+    スマホでも盤面をタッチして局面を進めることができるよ！<br>
+    PCなら Ctrl + マウスホイール上下で盤面サイズ調整もできる！
   </p>
 
   <!-- 棋譜選択セレクトボックス -->
@@ -137,13 +127,13 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 🔥 先に変数と関数 -->
+<!-- 先に変数と関数 -->
 <script language="javascript" type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";  // ファイルは直下に置いてる前提
+let KJ_DIR = "/shogi-kifu/";  // ファイルは直下に置いている前提
 let KIF_FILE_NAME = "test.kif"; // デフォルト棋譜
 const UPDATE_TIME = 1;
 
-// ページロード時にURLパラメータチェック
+// URLパラメータから棋譜ファイル取得
 const urlParams = new URLSearchParams(window.location.search);
 const kifuParam = urlParams.get('kifu');
 if (kifuParam) {
@@ -161,11 +151,11 @@ function onKifuSelect() {
 }
 
 window.onload = function() {
-  load_kifu(); // いつも通り読み込み
+  load_kifu(); // 普通に棋譜を読み込むだけ！
 };
 </script>
 
-<!-- 🔥 最後に本体js -->
+<!-- 本体JS -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>

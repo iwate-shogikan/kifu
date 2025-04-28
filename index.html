@@ -17,7 +17,7 @@
       padding: 0;
       text-align: center;
       font-size: 1rem;
-      overflow-x: hidden; /* 横はみ出し禁止（ビューアだけ別管理） */
+      overflow-x: hidden;
     }
 
     header {
@@ -57,7 +57,13 @@
 
     #KJ_DIV {
       margin-top: 2rem;
-      overflow-x: auto; /* 横スクロールだけ許可 */
+    }
+
+    /* ビューア内部（img, canvas）を画面幅に合わせる！ */
+    #KJ_DIV img,
+    #KJ_DIV canvas {
+      max-width: 100%;
+      height: auto;
     }
 
     footer {
@@ -111,7 +117,7 @@
 
   <p>
     好きな棋譜を選んで再生してみよう！<br>
-    スマホではタッチで局面を進められるよ！<br>
+    スマホでもタッチで局面を進められるよ！<br>
     PCなら Ctrl + マウスホイール上下で盤面サイズ調整もできる！
   </p>
 

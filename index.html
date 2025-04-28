@@ -66,7 +66,7 @@
   }
 
   body {
-    font-size: 1.2rem; /* 全体ちょっと大きく */
+    font-size: 1.3rem; /* ←もっと大きくする */
   }
 
   main select {
@@ -75,7 +75,7 @@
   }
 
   header {
-    font-size: 1.8rem;
+    font-size: 2rem;
     padding: 1.2rem 0;
   }
 
@@ -84,7 +84,20 @@
   }
 
   p {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
+  }
+
+  /* 棋譜ビューアがはみ出ないように */
+  #KJ_DIV {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  /* もしKJ_DIV内部にcanvasや画像があるなら自動調整 */
+  #KJ_DIV img, 
+  #KJ_DIV canvas {
+    max-width: 100%;
+    height: auto;
   }
 }
 

@@ -66,35 +66,36 @@
       color: #999;
     }
 
-    /* スマホ対応 */
-    @media (max-width: 600px) {
-      body {
-        font-size: 1.5rem;
-      }
+/* スマホ対応 */
+@media (max-width: 500px) {
+  body {
+    font-size: 1.5rem;
+  }
 
-      main {
-        width: 95%;
-        max-width: 95%;
-        margin: 1rem auto;
-        padding: 1.5rem;
-      }
+  main {
+    width: 95%;
+    max-width: 95%;
+    margin: 1rem auto;
+    padding: 1.5rem;
+  }
 
-      main select {
-        font-size: 1.5rem;
-      }
+  main select {
+    font-size: 1.5rem;
+  }
 
-      header {
-        font-size: 2.0rem;
-        padding: 1.2rem 0;
-      }
+  header {
+    font-size: 2.0rem;
+    padding: 1.2rem 0;
+  }
 
-      h1 {
-        font-size: 1.6rem;
-      }
+  h1 {
+    font-size: 1.6rem;
+  }
 
-      p {
-        font-size: 2.5rem;
-      }
+  main p {
+    font-size: 2.5rem;  /* ← ここ！main pに直した！ */
+  }
+}
     }
   </style>
 </head>

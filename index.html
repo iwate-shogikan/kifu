@@ -46,8 +46,7 @@
       border: 1px solid #ccc;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-top: 1.5rem;
-      /* width: 100%; ←これ消した！自然サイズで */
-      max-width: 300px; /* 適度な最大幅制限だけ付与 */
+      max-width: 300px;
     }
 
     main p {
@@ -58,12 +57,7 @@
 
     #KJ_DIV {
       margin-top: 2rem;
-    }
-
-    #KJ_DIV img,
-    #KJ_DIV canvas {
-      max-width: 100%;
-      height: auto;
+      /* ここに何も書かない！ビューアに干渉しない！ */
     }
 
     footer {
@@ -79,14 +73,13 @@
       }
 
       main {
-        width: 85%;
-        max-width: 85%;
+        width: 90%;
+        max-width: 90%;
         margin: 1rem auto;
         padding: 1.5rem;
       }
 
       main select {
-        max-width: 100%; /* スマホでは選択肢を画面いっぱいに */
         font-size: 1.1rem;
       }
 

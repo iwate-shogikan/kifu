@@ -17,6 +17,7 @@
       padding: 0;
       text-align: center;
       font-size: 1rem;
+      overflow-x: hidden; /* はみ出し禁止 */
     }
 
     header {
@@ -33,7 +34,9 @@
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
       max-width: 800px;
+      box-sizing: border-box;
     }
 
     main select {
@@ -43,6 +46,7 @@
       border: 1px solid #ccc;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-top: 1.5rem;
+      width: 100%;
     }
 
     main p {
@@ -52,7 +56,18 @@
     }
 
     #KJ_DIV {
+      width: 100%;
       margin-top: 2rem;
+      overflow-x: auto;
+      box-sizing: border-box;
+    }
+
+    /* ビューア内部もちゃんと幅制御する */
+    #KJ_DIV > table,
+    #KJ_DIV > div {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     footer {
@@ -62,37 +77,36 @@
     }
 
     /* スマホ対応 */
- @media (max-width: 600px) {
-  body {
-    font-size: 1.2rem;
-  }
+    @media (max-width: 600px) {
+      body {
+        font-size: 1.2rem;
+      }
 
-  main {
-    width: 98%; /* ←スマホの画面幅にほぼフィット！ */
-    max-width: 100%;
-    margin: 1rem auto;
-    padding: 1.5rem;
-  }
+      main {
+        width: 100%;
+        max-width: 100%;
+        margin: 1rem auto;
+        padding: 1.5rem;
+      }
 
-  main select {
-    width: 100%;
-    font-size: 1.1rem;
-  }
+      main select {
+        width: 100%;
+        font-size: 1.1rem;
+      }
 
-  header {
-    font-size: 2rem;
-    padding: 1.2rem 0;
-  }
+      header {
+        font-size: 2rem;
+        padding: 1.2rem 0;
+      }
 
-  h1 {
-    font-size: 1.6rem;
-  }
+      h1 {
+        font-size: 1.6rem;
+      }
 
-  p {
-    font-size: 1.4rem;
-  }
-}
-
+      p {
+        font-size: 1.4rem;
+      }
+    }
   </style>
 </head>
 
@@ -107,7 +121,7 @@
 
   <p>
     好きな棋譜を選んで再生してみよう！<br>
-    スマホでも盤面をタッチして局面を進めることができるよ！<br>
+    スマホでもタッチで局面を進められるよ！<br>
     PCなら Ctrl + マウスホイール上下で盤面サイズ調整もできる！
   </p>
 
@@ -118,7 +132,7 @@
     <option value="tume.kif">詰め将棋</option>
   </select>
 
-  <br>
+  <br><br>
 
   <!-- 棋譜ビューアの表示場所 -->
   <div id="KJ_DIV"></div>
@@ -130,8 +144,8 @@
 
 <!-- 先に変数と関数 -->
 <script language="javascript" type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";  // ファイルは直下に置いている前提
-let KIF_FILE_NAME = "test.kif"; // デフォルト棋譜
+let KJ_DIR = "/shogi-kifu/";
+let KIF_FILE_NAME = "test.kif";
 const UPDATE_TIME = 1;
 
 // URLパラメータから棋譜ファイル取得
@@ -152,11 +166,11 @@ function onKifuSelect() {
 }
 
 window.onload = function() {
-  load_kifu(); // 普通に棋譜を読み込むだけ！
+  load_kifu();
 };
 </script>
 
-<!-- 本体JS -->
+<!-- 最後に本体JS -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>

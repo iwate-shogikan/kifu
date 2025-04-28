@@ -120,7 +120,7 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 先に変数と関数を定義 -->
+<!-- 変数と関数を先に定義 -->
 <script language="javascript" type="text/javascript">
 let KJ_DIR = "/shogi-kifu/";
 let KIF_FILE_NAME = "test.kif";
@@ -140,35 +140,35 @@ if (kifuParam) {
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   const selectedKifu = select.value;
-  // URLパラメータ付きでリロード
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
+</script>
 
-// window.onload でまとめて処理
+<!-- kj_free.jsを読み込む -->
+<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
+
+<!-- フェードイン制御 -->
+<script>
 window.onload = function() {
-  load_kifu(); // 棋譜ビューアロード
+  load_kifu(); // 棋譜ビューアロード開始
 
   const targetNode = document.getElementById('KJ_DIV');
   const observer = new MutationObserver((mutationsList, observer) => {
-    if (targetNode.querySelector('canvas')) {
+    if (targetNode.children.length > 0) { // 子要素ができたらOK
       const main = document.querySelector('main');
       main.style.display = 'block';
       setTimeout(() => {
         main.style.opacity = '1';
         main.style.transform = 'translateY(0)';
         document.getElementById('loader').style.display = 'none';
-      }, 100); // ほんの少しだけディレイ
+      }, 100); // ちょっと遅延で滑らかに
       observer.disconnect(); // 監視終了
     }
   });
 
   observer.observe(targetNode, { childList: true, subtree: true });
 };
-
 </script>
-
-<!-- 本体のkj_free.jsを読み込む -->
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>
 </html>

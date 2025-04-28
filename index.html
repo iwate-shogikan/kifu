@@ -46,7 +46,8 @@
       border: 1px solid #ccc;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       margin-top: 1.5rem;
-      width: 100%;
+      /* width: 100%; ←これ消した！自然サイズで */
+      max-width: 300px; /* 適度な最大幅制限だけ付与 */
     }
 
     main p {
@@ -59,7 +60,6 @@
       margin-top: 2rem;
     }
 
-    /* ビューア内部（img, canvas）を画面幅に合わせる！ */
     #KJ_DIV img,
     #KJ_DIV canvas {
       max-width: 100%;
@@ -79,14 +79,14 @@
       }
 
       main {
-        width: 95%;
-        max-width: 95%;
+        width: 85%;
+        max-width: 85%;
         margin: 1rem auto;
         padding: 1.5rem;
       }
 
       main select {
-        width: 100%;
+        max-width: 100%; /* スマホでは選択肢を画面いっぱいに */
         font-size: 1.1rem;
       }
 
@@ -138,7 +138,7 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 先に変数と関数 -->
+<!-- 変数と関数 -->
 <script language="javascript" type="text/javascript">
 let KJ_DIR = "/shogi-kifu/";
 let KIF_FILE_NAME = "test.kif";

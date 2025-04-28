@@ -3,97 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <title>棋譜から学ぶやさしい将棋</title>
- <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-<link rel="icon" href="/shogi-kifu/favicon.ico" type="image/x-icon">
-　<!-- PNGならこっち -->
-　<!-- <link rel="icon" href="/shogi-kifu/favicon.png" type="image/png"> -->
+
+  <!-- Google Fonts + ファビコン -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="/shogi-kifu/favicon.ico" type="image/x-icon">
+
   <style>
-body {
-  background: linear-gradient(to bottom, #f0f2f5, #dfe3e8);
-  font-family: 'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
+    body {
+      background: linear-gradient(to bottom, #f0f2f5, #dfe3e8);
+      font-family: 'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
 
-header {
-  background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
-  color: white;
-  padding: 2rem 0;
-  font-size: 2.2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+    header {
+      background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      padding: 2rem 0;
+      font-size: 2.2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 
-main {
-  background: white;
-  margin: 2rem auto;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
-}
+    main {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+      background: white;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+    }
 
-main select {
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-top: 1.5rem;
-}
+    main select {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-top: 1.5rem;
+    }
 
-main p {
-  line-height: 1.8;
-  font-size: 1.1rem;
-  color: #333;
-}
+    main p {
+      line-height: 1.8;
+      font-size: 1.1rem;
+      color: #333;
+    }
 
-footer {
-  margin-top: 4rem;
-  font-size: 0.9rem;
-  color: #999;
-}
-    
-main {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeIn 1s ease-out forwards;
-}
+    footer {
+      margin-top: 4rem;
+      font-size: 0.9rem;
+      color: #999;
+    }
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    /* スマホ対応 */
+    @media (max-width: 600px) {
+      main {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
 
-@media (max-width: 600px) {
-  main {
-    margin: 1rem;
-    padding: 1.5rem;
-  }
+      main select {
+        width: 100%;
+        font-size: 1rem;
+      }
 
-  select {
-    width: 100%;
-    font-size: 1rem;
-  }
+      header {
+        font-size: 1.5rem;
+        padding: 1rem 0;
+      }
 
-  header {
-    font-size: 1.5rem;
-    padding: 1rem 0;
-  }
-
-  h1 {
-    font-size: 1.4rem;
-  }
-}
-
+      h1 {
+        font-size: 1.4rem;
+      }
+    }
   </style>
 </head>
+
 <body>
+
+<!-- ローディング画面 -->
 <div id="loader" style="position:fixed;width:100%;height:100%;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center;">
   <p>Loading...</p>
 </div>
+
 <header>
   棋譜から学ぶやさしい将棋
 </header>
@@ -114,9 +110,8 @@ main {
     <option value="tume.kif">詰め将棋</option>
   </select>
 
-  </br>
-</br>
-  
+  <br><br>
+
   <!-- 棋譜ビューアの表示場所 -->
   <div id="KJ_DIV"></div>
 </main>
@@ -125,13 +120,13 @@ main {
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 🔥 先に変数と関数を定義 -->
+<!-- 先に変数と関数を定義 -->
 <script language="javascript" type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";  // ファイルは直下に置いている前提
-let KIF_FILE_NAME = "test.kif"; // デフォルト棋譜
+let KJ_DIR = "/shogi-kifu/";
+let KIF_FILE_NAME = "test.kif";
 const UPDATE_TIME = 1;
 
-// ページロード時にURLパラメータをチェック
+// URLパラメータから棋譜ファイル取得
 const urlParams = new URLSearchParams(window.location.search);
 const kifuParam = urlParams.get('kifu');
 if (kifuParam) {
@@ -145,24 +140,25 @@ if (kifuParam) {
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   const selectedKifu = select.value;
-
-  // URLに棋譜ファイル名をつけてリロード
+  // URLパラメータ付きでリロード
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
+// window.onload でまとめて処理
 window.onload = function() {
-  load_kifu();
+  load_kifu(); // 棋譜読み込み
+  const main = document.querySelector('main');
+  main.style.display = 'block';
+  setTimeout(() => {
+    main.style.opacity = '1';
+    main.style.transform = 'translateY(0)';
+    document.getElementById('loader').style.display = 'none'; // ローディング非表示
+  }, 100);
 };
 </script>
 
-<!-- 🔥 最後にkj_free.jsを読み込む -->
+<!-- 本体のkj_free.jsを読み込む -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
-
-<script>
-window.addEventListener('load', function() {
-  document.getElementById('loader').style.display = 'none';
-});
-</script>
 
 </body>
 </html>

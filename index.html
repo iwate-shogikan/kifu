@@ -16,6 +16,7 @@
       margin: 0;
       padding: 0;
       text-align: center;
+      font-size: 1rem;
     }
 
     header {
@@ -46,7 +47,7 @@
 
     main p {
       line-height: 1.8;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: #333;
     }
 
@@ -56,51 +57,50 @@
       color: #999;
     }
 
-    /* スマホ対応 */
-@media (max-width: 600px) {
-  main {
-    width: 95%;
-    max-width: 95%;
-    margin: 1rem auto;
-    padding: 1.5rem;
-  }
+    /* 棋譜ビューア領域の初期化（必ず） */
+    #KJ_DIV {
+      max-width: 100%;
+      margin: 0 auto;
+      overflow-x: auto;
+    }
 
-  body {
-    font-size: 1.3rem; /* ←もっと大きくする */
-  }
+    #KJ_DIV img,
+    #KJ_DIV canvas {
+      max-width: 100%;
+      height: auto;
+    }
 
-  main select {
-    width: 100%;
-    font-size: 1.2rem;
-  }
+    /* スマホ向け */
+    @media (max-width: 600px) {
+      body {
+        font-size: 1.3rem;
+      }
 
-  header {
-    font-size: 2rem;
-    padding: 1.2rem 0;
-  }
+      main {
+        width: 95%;
+        max-width: 95%;
+        margin: 1rem auto;
+        padding: 1.5rem;
+      }
 
-  h1 {
-    font-size: 1.6rem;
-  }
+      main select {
+        width: 100%;
+        font-size: 1.2rem;
+      }
 
-  p {
-    font-size: 1.4rem;
-  }
+      header {
+        font-size: 2rem;
+        padding: 1.2rem 0;
+      }
 
-  /* 棋譜ビューアがはみ出ないように */
-  #KJ_DIV {
-    overflow-x: auto;
-    max-width: 100%;
-  }
+      h1 {
+        font-size: 1.6rem;
+      }
 
-  /* もしKJ_DIV内部にcanvasや画像があるなら自動調整 */
-  #KJ_DIV img, 
-  #KJ_DIV canvas {
-    max-width: 100%;
-    height: auto;
-  }
-}
-
+      p {
+        font-size: 1.4rem;
+      }
+    }
   </style>
 </head>
 
@@ -115,9 +115,9 @@
 
   <p>
     好きな棋譜を選んで再生してみよう！<br>
-    スマホの場合は盤面のタッチで再生できます<br>
-    盤面の大きさはブラウザの表示倍率で調節してください<br>
-    （Windows Chromeの場合は Ctrl + マウスホイール上下）
+    スマホの場合は盤面タッチで再生できます<br>
+    盤面の大きさはブラウザ表示倍率で調整してください<br>
+    (Windows Chromeの場合は Ctrl + マウスホイール上下)
   </p>
 
   <!-- 棋譜選択セレクトボックス -->
@@ -137,13 +137,13 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 変数と関数を定義 -->
+<!-- 🔥 先に変数と関数 -->
 <script language="javascript" type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";
-let KIF_FILE_NAME = "test.kif";
+let KJ_DIR = "/shogi-kifu/";  // ファイルは直下に置いてる前提
+let KIF_FILE_NAME = "test.kif"; // デフォルト棋譜
 const UPDATE_TIME = 1;
 
-// URLパラメータから棋譜ファイル取得
+// ページロード時にURLパラメータチェック
 const urlParams = new URLSearchParams(window.location.search);
 const kifuParam = urlParams.get('kifu');
 if (kifuParam) {
@@ -157,19 +157,18 @@ if (kifuParam) {
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   const selectedKifu = select.value;
+
+  // URLに棋譜ファイル名を付けてリロード
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
-</script>
 
-<!-- kj_free.js 読み込み -->
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
-
-<!-- ページロード時に棋譜読み込み -->
-<script>
 window.onload = function() {
-  load_kifu(); // 普通に即呼び出し
+  load_kifu();
 };
 </script>
+
+<!-- 🔥 最後に本体js -->
+<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>
 </html>

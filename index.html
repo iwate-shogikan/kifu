@@ -147,14 +147,24 @@ function onKifuSelect() {
 // window.onload でまとめて処理
 window.onload = function() {
   load_kifu(); // 棋譜ビューアロード
-  setTimeout(() => {
-    const main = document.querySelector('main');
-    main.style.display = 'block';
-    main.style.opacity = '1';
-    main.style.transform = 'translateY(0)';
-    document.getElementById('loader').style.display = 'none';
-  }, 500); // ← 500ミリ秒 (0.5秒) 遅らせる！
+
+  const targetNode = document.getElementById('KJ_DIV');
+  const observer = new MutationObserver((mutationsList, observer) => {
+    if (targetNode.querySelector('canvas')) {
+      const main = document.querySelector('main');
+      main.style.display = 'block';
+      setTimeout(() => {
+        main.style.opacity = '1';
+        main.style.transform = 'translateY(0)';
+        document.getElementById('loader').style.display = 'none';
+      }, 100); // ほんの少しだけディレイ
+      observer.disconnect(); // 監視終了
+    }
+  });
+
+  observer.observe(targetNode, { childList: true, subtree: true });
 };
+
 </script>
 
 <!-- 本体のkj_free.jsを読み込む -->

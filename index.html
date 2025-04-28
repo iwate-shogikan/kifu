@@ -17,6 +17,7 @@
       padding: 0;
       text-align: center;
       font-size: 1rem;
+      overflow-x: hidden; /* ←はみ出し防止 */
     }
 
     header {
@@ -51,29 +52,29 @@
       color: #333;
     }
 
+    #KJ_DIV {
+      display: block;
+      overflow-x: auto;
+      max-width: 100%;
+      margin: 1rem auto 0 auto;
+      padding: 0;
+    }
+
+    #KJ_DIV img,
+    #KJ_DIV canvas {
+      max-width: none; /* ビューア内部は縮めない */
+    }
+
     footer {
       margin-top: 4rem;
       font-size: 0.9rem;
       color: #999;
     }
 
-    /* 棋譜ビューア領域の初期化（必ず） */
-    #KJ_DIV {
-      max-width: 100%;
-      margin: 0 auto;
-      overflow-x: auto;
-    }
-
-    #KJ_DIV img,
-    #KJ_DIV canvas {
-      max-width: 100%;
-      height: auto;
-    }
-
-    /* スマホ向け */
+    /* スマホ対応 */
     @media (max-width: 600px) {
       body {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
       }
 
       main {
@@ -85,7 +86,7 @@
 
       main select {
         width: 100%;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
       }
 
       header {
@@ -115,9 +116,8 @@
 
   <p>
     好きな棋譜を選んで再生してみよう！<br>
-    スマホの場合は盤面タッチで再生できます<br>
-    盤面の大きさはブラウザ表示倍率で調整してください<br>
-    (Windows Chromeの場合は Ctrl + マウスホイール上下)
+    スマホでは横スクロールできるよ！<br>
+    PCなら盤面の大きさは Ctrl + マウスホイール上下で調整できるよ！
   </p>
 
   <!-- 棋譜選択セレクトボックス -->
@@ -157,13 +157,11 @@ if (kifuParam) {
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   const selectedKifu = select.value;
-
-  // URLに棋譜ファイル名を付けてリロード
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
 window.onload = function() {
-  load_kifu();
+  load_kifu(); // いつも通り読み込み
 };
 </script>
 

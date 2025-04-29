@@ -34,13 +34,15 @@
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 95%;
-      max-width: 800px;
+      width: 900px; /* ★ mainも900px */
+      max-width: 900px;
       box-sizing: border-box;
     }
 
-    /* ← 本文だけ包むラッパー */
+    /* 本文だけ包むラッパー */
     #content-wrapper {
+      width: 900px; /* ★ 本文ラッパーも900px */
+      margin: 0 auto;
       text-align: center;
     }
 
@@ -79,14 +81,14 @@
       }
 
       main {
-        width: 95%;
-        max-width: 95%;
+        width: 100%;
+        max-width: 100%;
         margin: 1rem auto;
         padding: 1.5rem;
       }
 
       #content-wrapper {
-        transform: scale(0.94); /* ← 本文だけ縮小 */
+        transform: scale(0.9); /* ★ 本文だけ90%縮小 */
         transform-origin: top center;
       }
 
@@ -122,8 +124,8 @@
 
     <p>
       好きな棋譜を選んで再生してみよう！<br>
-      スマホでもタッチで局面を進められるよ！<br>
-      PCなら Ctrl + マウスホイール上下で盤面サイズ調整もできる！
+      スマホでもタッチで局面を進められるよ<br>
+      PCなら Ctrl + マウスホイール上下で盤面サイズ調整もできる
     </p>
 
     <!-- 棋譜選択セレクトボックス -->

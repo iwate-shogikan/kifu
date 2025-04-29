@@ -39,7 +39,12 @@
       box-sizing: border-box;
     }
 
-    main select {
+    /* ← 本文だけ包むラッパー */
+    #content-wrapper {
+      text-align: center;
+    }
+
+    #content-wrapper select {
       padding: 0.6rem 1rem;
       font-size: 1rem;
       border-radius: 8px;
@@ -49,7 +54,7 @@
       max-width: 300px;
     }
 
-    main p {
+    #content-wrapper p {
       line-height: 1.8;
       font-size: 1.2rem;
       color: #333;
@@ -57,9 +62,8 @@
 
     #KJ_DIV {
       margin-top: 2rem;
-      /* ここに何も書かない！ビューアに干渉しない！ */
-    　max-width: 100%;
-  　　overflow-x: auto;
+      max-width: 100%;
+      overflow-x: auto;
     }
 
     footer {
@@ -68,40 +72,41 @@
       color: #999;
     }
 
-/* スマホ対応 */
-@media (max-width: 800px) {
-  body {
-    font-size: 1.5rem;
-  }
+    /* スマホ対応 */
+    @media (max-width: 800px) {
+      body {
+        font-size: 1.5rem;
+      }
 
-  main {
-    width: 95%;
-    max-width: 95%;
-    margin: 1rem auto;
-    padding: 1.5rem;
+      main {
+        width: 95%;
+        max-width: 95%;
+        margin: 1rem auto;
+        padding: 1.5rem;
+      }
 
-    transform: scale(0.94);        /* ←★これ追加 */
-    transform-origin: top center;  /* ←★これも追加 */
-  }
+      #content-wrapper {
+        transform: scale(0.94); /* ← 本文だけ縮小 */
+        transform-origin: top center;
+      }
 
-  main select {
-    font-size: 1.5rem;
-  }
+      #content-wrapper select {
+        font-size: 1.5rem;
+      }
 
-  header {
-    font-size: 2.0rem;
-    padding: 1.2rem 0;
-  }
+      header {
+        font-size: 2.0rem;
+        padding: 1.2rem 0;
+      }
 
-  h1 {
-    font-size: 1.6rem;
-  }
+      h1 {
+        font-size: 1.6rem;
+      }
 
-  main p {
-    font-size: 1.5rem;
-  }
-}
-
+      #content-wrapper p {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 
@@ -112,20 +117,22 @@
 </header>
 
 <main>
-  <h1>GitHub Pagesで柿木棋譜ビューア</h1>
+  <div id="content-wrapper">
+    <h1>GitHub Pagesで柿木棋譜ビューア</h1>
 
-  <p>
-    好きな棋譜を選んで再生してみよう！<br>
-    スマホでもタッチで局面を進められるよ！<br>
-    PCなら Ctrl + マウスホイール上下で盤面サイズ調整もできる！
-  </p>
+    <p>
+      好きな棋譜を選んで再生してみよう！<br>
+      スマホでもタッチで局面を進められるよ！<br>
+      PCなら Ctrl + マウスホイール上下で盤面サイズ調整もできる！
+    </p>
 
-  <!-- 棋譜選択セレクトボックス -->
-  <select id="kifuSelector" onchange="onKifuSelect()">
-    <option value="test.kif">「四間飛車棒銀対策」太地将棋学校1限目</option>
-    <option value="henka.kif">分岐有り</option>
-    <option value="tume.kif">詰め将棋</option>
-  </select>
+    <!-- 棋譜選択セレクトボックス -->
+    <select id="kifuSelector" onchange="onKifuSelect()">
+      <option value="test.kif">「四間飛車棒銀対策」太地将棋学校1限目</option>
+      <option value="henka.kif">分岐有り</option>
+      <option value="tume.kif">詰め将棋</option>
+    </select>
+  </div>
 
   <br><br>
 

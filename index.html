@@ -110,6 +110,45 @@
         font-size: 1.5rem;
       }
     }
+    
+    /* タブレット対応 */
+  @media (min-width: 801px) and (max-width: 1200px) {
+
+      body {
+        font-size: 1.5rem;
+      }
+
+      main {
+        width: 700px;
+        /*max-width: 100%;*//*スマホの画面内に収める*/
+        margin: 0.5rem auto;
+        padding: 0.5rem;
+      }
+
+  #content-wrapper {
+    transform: scale(1.00);
+    transform-origin: top center;
+  }
+
+  #content-wrapper select {
+    font-size: 1.5rem;
+  }
+
+      header {
+        width: 600px;
+        margin: 0 auto;
+        font-size: 2.0rem;
+        padding: 1.2rem 0;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      #content-wrapper p {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 

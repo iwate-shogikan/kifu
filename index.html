@@ -39,10 +39,11 @@
       box-sizing: border-box;
     }
 
-    select {
-    font-family: "Noto Sans JP", sans-serif;
-    font-size: 16px;
-    }
+#kifuSelector {
+  min-width: 400px; /* 適宜調整。350〜400pxでもOK */
+  font-family: "Noto Sans JP", sans-serif;
+  font-size: 16px;
+}
 
     /* 本文だけ包むラッパー */
     #content-wrapper {
@@ -222,29 +223,33 @@ width=600 height=400 frameborder=0></iframe>
 <!-- 変数と関数 -->
 <script language="javascript" type="text/javascript">
 let KJ_DIR = "/shogi-kifu/";
-let KIF_FILE_NAME = "test.kif";
+let KIF_FILE_NAME;
 const UPDATE_TIME = 1;
 
-// URLパラメータから棋譜ファイル取得
 const urlParams = new URLSearchParams(window.location.search);
 const kifuParam = urlParams.get('kifu');
-if (kifuParam) {
-  KIF_FILE_NAME = kifuParam;
+
+window.onload = function () {
   const selector = document.getElementById('kifuSelector');
+
   if (selector) {
-    selector.value = kifuParam;
+    if (kifuParam) {
+      KIF_FILE_NAME = kifuParam;
+      selector.value = kifuParam;
+    } else {
+      // パラメータがない場合は select の最初の値を使う
+      KIF_FILE_NAME = selector.value;
+    }
   }
-}
+
+  load_kifu(); // ←ここで KIF_FILE_NAME を使って棋譜読み込み
+};
 
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   const selectedKifu = select.value;
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
-
-window.onload = function() {
-  load_kifu();
-};
 </script>
 
 <!-- 最後に本体JS -->

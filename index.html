@@ -191,43 +191,36 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<script type="text/javascript">
+<script>
 const KJ_DIR = "/shogi-kifu/";
 const UPDATE_TIME = 1;
 
 function onKifuSelect() {
-  const select = document.getElementById('kifuSelector');
-  const selectedKifu = select.value;
+  const selector = document.getElementById('kifuSelector');
+  const selectedKifu = selector.value;
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
-// DOM構築後に確実に実行
 document.addEventListener("DOMContentLoaded", () => {
   const selector = document.getElementById('kifuSelector');
-  console.log(selector);  // ← ★ここを追加！
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu');
-
-  if (!selector) {
-    alert("セレクトボックスが見つかりません");
-    return;
-  }
 
   if (kifuParam) {
     window.KIF_FILE_NAME = kifuParam;
     selector.value = kifuParam;
   } else {
-    window.KIF_FILE_NAME = selector.options[0].value;  // ← ここをグローバルに
+    window.KIF_FILE_NAME = selector.options[0].value;
     selector.value = window.KIF_FILE_NAME;
   }
 
-  // ✅ グローバル変数として渡されることで kj_free.js 側と連携可能に
+  console.log("KIF_FILE_NAME =", window.KIF_FILE_NAME); // ✅ 確認用
+
   load_kifu();
 });
 </script>
 
-<!-- 最後に本体JS -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
-
+  
 </body>
 </html>

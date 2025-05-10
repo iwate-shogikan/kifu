@@ -190,7 +190,6 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 変数と関数 -->
 <script type="text/javascript">
 const KJ_DIR = "/shogi-kifu/";
 let KIF_FILE_NAME = "";
@@ -202,7 +201,8 @@ function onKifuSelect() {
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
-window.onload = function () {
+// DOMが完全に構築されてから実行
+document.addEventListener("DOMContentLoaded", () => {
   const selector = document.getElementById('kifuSelector');
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu');
@@ -212,20 +212,16 @@ window.onload = function () {
       KIF_FILE_NAME = kifuParam;
       selector.value = kifuParam;
     } else {
-      // パラメータが無い場合、最初の<option>の値を使用
+      // ✅ セレクトボックスが存在する前提で代入
       KIF_FILE_NAME = selector.options[0].value;
       selector.value = KIF_FILE_NAME;
     }
-  }
-
-  if (KIF_FILE_NAME) {
-    load_kifu();  // kj_free.js 側の関数を呼び出し
+    load_kifu(); // ✅ この時点で KIF_FILE_NAME は必ず定義済み
   } else {
-    alert("エラー：棋譜ファイルが指定されていません。");
+    alert("セレクトボックスが見つかりません。");
   }
-};
+});
 </script>
-
 
 <!-- 最後に本体JS -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>

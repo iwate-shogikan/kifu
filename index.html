@@ -181,44 +181,27 @@
   <option value="henka.kif">分岐有り</option>
   <option value="tume.kif">詰め将棋</option>
 </select>
-
-<script>
-  const select = document.getElementById("kifuSelector");
-  const tmp = document.createElement("span");
-  tmp.style.visibility = "hidden";
-  tmp.style.position = "absolute";
-  tmp.style.whiteSpace = "nowrap";
-  tmp.style.font = getComputedStyle(select).font;
-  document.body.appendChild(tmp);
-
-  let maxWidth = 0;
-  [...select.options].forEach(opt => {
-    tmp.textContent = opt.text;
-    const width = tmp.offsetWidth;
-    if (width > maxWidth) maxWidth = width;
-  });
-
-  select.style.width = (maxWidth + 40) + "px"; // パディング分の余白を追加
-  document.body.removeChild(tmp);
-</script>
     
   </div>
 
-  <!-- 棋譜ビューアの表示場所 -->
-  <div id="KJ_DIV"></div>
+<!-- 棋譜ビューアの表示場所 -->
+<div id="KJ_DIV"></div>
+
 <script type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";
+// 変数定義は1回だけ
+const KJ_DIR = "/shogi-kifu/";
 let KIF_FILE_NAME = "";
 const UPDATE_TIME = 1;
 
+// 棋譜選択時の挙動
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
   const selectedKifu = select.value;
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
-// 初期化処理
-window.onload = function () {
+// 初期化
+window.addEventListener("DOMContentLoaded", () => {
   const selector = document.getElementById('kifuSelector');
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu');
@@ -228,18 +211,20 @@ window.onload = function () {
       KIF_FILE_NAME = kifuParam;
       selector.value = kifuParam;
     } else {
-      KIF_FILE_NAME = selector.value; // ←これで確実に値が入る
+      KIF_FILE_NAME = selector.value;
     }
   }
 
-  // KIF_FILE_NAME が決まった後で load_kifu を呼ぶ
   if (KIF_FILE_NAME) {
-    load_kifu();
+    load_kifu();  // この関数は kj_free.js にある想定
   } else {
     alert("エラー 001：棋譜ファイル名 KIF_FILE_NAME の指定がありません。");
   }
-};
+});
 </script>
+
+<!-- kj_free.js の読込 -->
+<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 
   <p>ここからはLishogiの動作テストです。</p>
@@ -254,40 +239,6 @@ width=600 height=400 frameborder=0></iframe>
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
-<!-- 変数と関数 -->
-<script language="javascript" type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";
-let KIF_FILE_NAME;
-const UPDATE_TIME = 1;
-
-const urlParams = new URLSearchParams(window.location.search);
-const kifuParam = urlParams.get('kifu');
-
-window.onload = function () {
-  const selector = document.getElementById('kifuSelector');
-
-  if (selector) {
-    if (kifuParam) {
-      KIF_FILE_NAME = kifuParam;
-      selector.value = kifuParam;
-    } else {
-      // パラメータがない場合は select の最初の値を使う
-      KIF_FILE_NAME = selector.value;
-    }
-  }
-
-  load_kifu(); // ←ここで KIF_FILE_NAME を使って棋譜読み込み
-};
-
-function onKifuSelect() {
-  const select = document.getElementById('kifuSelector');
-  const selectedKifu = select.value;
-  window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
-}
-</script>
-
-<!-- 最後に本体JS -->
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>
 </html>

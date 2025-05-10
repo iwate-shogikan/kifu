@@ -192,7 +192,6 @@
 
 <script type="text/javascript">
 const KJ_DIR = "/shogi-kifu/";
-let KIF_FILE_NAME = "";
 const UPDATE_TIME = 1;
 
 function onKifuSelect() {
@@ -201,25 +200,27 @@ function onKifuSelect() {
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
-// DOMが完全に構築されてから実行
+// DOM構築後に確実に実行
 document.addEventListener("DOMContentLoaded", () => {
   const selector = document.getElementById('kifuSelector');
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu');
 
-  if (selector) {
-    if (kifuParam) {
-      KIF_FILE_NAME = kifuParam;
-      selector.value = kifuParam;
-    } else {
-      // ✅ セレクトボックスが存在する前提で代入
-      KIF_FILE_NAME = selector.options[0].value;
-      selector.value = KIF_FILE_NAME;
-    }
-    load_kifu(); // ✅ この時点で KIF_FILE_NAME は必ず定義済み
-  } else {
-    alert("セレクトボックスが見つかりません。");
+  if (!selector) {
+    alert("セレクトボックスが見つかりません");
+    return;
   }
+
+  if (kifuParam) {
+    window.KIF_FILE_NAME = kifuParam;
+    selector.value = kifuParam;
+  } else {
+    window.KIF_FILE_NAME = selector.options[0].value;  // ← ここをグローバルに
+    selector.value = window.KIF_FILE_NAME;
+  }
+
+  // ✅ グローバル変数として渡されることで kj_free.js 側と連携可能に
+  load_kifu();
 });
 </script>
 

@@ -148,7 +148,7 @@
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 <script>
-  var KJ_DIR = "";
+  var KJ_DIR = ""; // .kifがindex.htmlと同じ階層
   var KIF_FILE_NAME = "";
   var UPDATE_TIME = 1;
 
@@ -168,14 +168,16 @@
       selector.value = kifuParam;
     } else {
       const defaultKifu = selector.options[0].value;
-      // ✅ パラメータ付URLで再読み込み → kj_free.js に任せる
-      window.location.href = "?kifu=" + encodeURIComponent(defaultKifu);
+
+      // ✅ パラメータを付加してページをリロード（これで再生される）
+      const newUrl = window.location.origin + window.location.pathname + "?kifu=" + encodeURIComponent(defaultKifu);
+      window.location.replace(newUrl); // ← これ重要！！
+      return; // ← これがないと下で load_kifu() が走る
     }
 
-    // ❌ load_kifu() は呼ばない → kj_free.js 側が自動でやる！
+    // ✅ kj_free.js が自動で load_kifu() を呼ぶのでここで呼ばない！
   });
 </script>
-
 
 </body>
 </html>

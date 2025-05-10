@@ -136,6 +136,15 @@
 
 <footer>&copy; 2025 やさしい将棋プロジェクト</footer>
 
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const kifuParam = urlParams.get('kifu') || "test.kif";
+
+  var KJ_DIR = "/shogi-kifu/kifu/kj_free107/kj_free/";
+  var KIF_FILE_NAME = kifuParam;
+  var UPDATE_TIME = 1;
+</script>
+
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 <script>
@@ -149,9 +158,7 @@
     const selector = document.getElementById('kifuSelector');
     const urlParams = new URLSearchParams(window.location.search);
     const kifuParam = urlParams.get('kifu');
-
     if (kifuParam) {
-      KIF_FILE_NAME = kifuParam;
       selector.value = kifuParam;
     } else {
       const defaultKifu = selector.options[0].value;
@@ -160,6 +167,6 @@
     }
   });
 </script>
-
+  
 </body>
 </html>

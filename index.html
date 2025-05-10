@@ -181,12 +181,12 @@
   <option value="tume.kif">詰め将棋</option>
 </select>
 
-<style>
-  #kifuSelector {
-    font-family: "Noto Sans JP", sans-serif;
-    font-size: 16px;
-  }
-</style>
+<select id="kifuSelector" onchange="onKifuSelect()">
+  <option value="20250510中塚西澤.kif">第54回　県支部対抗戦団体決勝先鋒戦</option>
+  <option value="test.kif">「四間飛車棒銀対策」太地将棋学校1限目</option>
+  <option value="henka.kif">分岐有り</option>
+  <option value="tume.kif">詰め将棋</option>
+</select>
 
 <script>
   const select = document.getElementById("kifuSelector");
@@ -194,7 +194,7 @@
   tmp.style.visibility = "hidden";
   tmp.style.position = "absolute";
   tmp.style.whiteSpace = "nowrap";
-  tmp.style.font = getComputedStyle(select).font; // セレクトと同じフォントで幅を測る
+  tmp.style.font = getComputedStyle(select).font;
   document.body.appendChild(tmp);
 
   let maxWidth = 0;
@@ -204,7 +204,7 @@
     if (width > maxWidth) maxWidth = width;
   });
 
-  select.style.width = (maxWidth + 40) + "px"; // 余裕を持たせて設定
+  select.style.width = (maxWidth + 40) + "px"; // パディング分の余白を追加
   document.body.removeChild(tmp);
 </script>
     

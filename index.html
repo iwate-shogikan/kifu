@@ -181,6 +181,7 @@
       tmp.style.visibility = "hidden";
       tmp.style.position = "absolute";
       tmp.style.whiteSpace = "nowrap";
+      tmp.style.font = getComputedStyle(select).font; // 👈 ここを追加！
       document.body.appendChild(tmp);
 
       let maxWidth = 0;

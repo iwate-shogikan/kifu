@@ -40,7 +40,7 @@
     }
 
 #kifuSelector {
-  min-width: 400px; /* 適宜調整。350〜400pxでもOK */
+  min-width: 360px; /* 適宜調整。350〜400pxでもOK */
   font-family: "Noto Sans JP", sans-serif;
   font-size: 16px;
 }
@@ -206,6 +206,40 @@
 
   <!-- 棋譜ビューアの表示場所 -->
   <div id="KJ_DIV"></div>
+<script type="text/javascript">
+let KJ_DIR = "/shogi-kifu/";
+let KIF_FILE_NAME = "";
+const UPDATE_TIME = 1;
+
+function onKifuSelect() {
+  const select = document.getElementById('kifuSelector');
+  const selectedKifu = select.value;
+  window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
+}
+
+// 初期化処理
+window.onload = function () {
+  const selector = document.getElementById('kifuSelector');
+  const urlParams = new URLSearchParams(window.location.search);
+  const kifuParam = urlParams.get('kifu');
+
+  if (selector) {
+    if (kifuParam) {
+      KIF_FILE_NAME = kifuParam;
+      selector.value = kifuParam;
+    } else {
+      KIF_FILE_NAME = selector.value; // ←これで確実に値が入る
+    }
+  }
+
+  // KIF_FILE_NAME が決まった後で load_kifu を呼ぶ
+  if (KIF_FILE_NAME) {
+    load_kifu();
+  } else {
+    alert("エラー 001：棋譜ファイル名 KIF_FILE_NAME の指定がありません。");
+  }
+};
+</script>
 
 
   <p>ここからはLishogiの動作テストです。</p>

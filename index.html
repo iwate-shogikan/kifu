@@ -156,6 +156,7 @@
       }
     }
   </style>
+  <script defer src="script.js"></script>
 </head>
 
 <body>
@@ -203,6 +204,7 @@ function onKifuSelect() {
 // DOM構築後に確実に実行
 document.addEventListener("DOMContentLoaded", () => {
   const selector = document.getElementById('kifuSelector');
+  console.log(selector);  // ← ★ここを追加！
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu');
 

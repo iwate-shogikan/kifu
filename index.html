@@ -175,6 +175,24 @@
       <option value="henka.kif">分岐有り</option>
       <option value="tume.kif">詰め将棋</option>
     </select>
+    <script>
+      const select = document.getElementById("kifuSelector");
+      const tmp = document.createElement("span");
+      tmp.style.visibility = "hidden";
+      tmp.style.position = "absolute";
+      tmp.style.whiteSpace = "nowrap";
+      document.body.appendChild(tmp);
+
+      let maxWidth = 0;
+      [...select.options].forEach(opt => {
+        tmp.textContent = opt.text;
+        const width = tmp.offsetWidth;
+        if (width > maxWidth) maxWidth = width;
+      });
+
+      select.style.width = (maxWidth + 40) + "px"; // パディング分余裕を持たせる
+      document.body.removeChild(tmp);
+    </script>
   </div>
 
   <!-- 棋譜ビューアの表示場所 -->

@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>棋譜から学ぶやさしい将棋</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/shogi-kifu/favicon.ico" type="image/x-icon" />
 
-  <!-- Google Fonts + ファビコン -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="icon" href="/shogi-kifu/favicon.ico" type="image/x-icon">
+  <!-- ✅ 先にグローバル変数を定義（kj_free.js の安全動作のため） -->
+  <script>var KIF_FILE_NAME = "";</script>
 
   <style>
     body {
@@ -19,7 +20,6 @@
       font-size: 1rem;
       overflow-x: auto;
     }
-
     header {
       background: linear-gradient(90deg, #2c3e50 0%, #34495e 100%);
       color: white;
@@ -27,30 +27,25 @@
       font-size: 2.2rem;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
-
     main {
       background: white;
       margin: 2rem auto;
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 900px; /* ★ mainも900px */
+      width: 900px;
       max-width: 900px;
       box-sizing: border-box;
     }
-
-#kifuSelector {
-  min-width: 360px; /* 適宜調整。350〜400pxでもOK */
-  font-family: "Noto Sans JP", sans-serif;
-  font-size: 16px;
-}
-
-    /* 本文だけ包むラッパー */
+    #kifuSelector {
+      min-width: 360px;
+      font-family: "Noto Sans JP", sans-serif;
+      font-size: 16px;
+    }
     #content-wrapper {
       margin: 0 auto;
       text-align: center;
     }
-
     #content-wrapper select {
       padding: 0.6rem 1rem;
       font-size: 1rem;
@@ -60,100 +55,55 @@
       margin-top: 1.5rem;
       max-width: 300px;
     }
-
     #content-wrapper p {
       line-height: 1.8;
       font-size: 1.2rem;
       color: #333;
     }
-
     #KJ_DIV {
       margin-top: 2rem;
       max-width: 100%;
       overflow-x: auto;
     }
-
     footer {
       margin-top: 4rem;
       font-size: 0.9rem;
       color: #999;
     }
-
-    /* スマホ対応 */
     @media (max-width: 660px) {
-      body {
-        font-size: 1.5rem;
-      }
-
+      body { font-size: 1.5rem; }
       main {
         width: 600px;
-        /*max-width: 100%;*//*スマホの画面内に収める*/
         margin: 0.5rem auto;
         padding: 0.5rem;
       }
-
-  #content-wrapper {
-    transform: scale(1.00);
-    transform-origin: top center;
-  }
-
-  #content-wrapper select {
-    font-size: 1.5rem;
-  }
-
+      #content-wrapper { transform: scale(1.00); transform-origin: top center; }
+      #content-wrapper select { font-size: 1.5rem; }
       header {
         width: 600px;
         margin: 0 auto;
         font-size: 2.0rem;
         padding: 1.2rem 0;
       }
-
-      h1 {
-        font-size: 1.6rem;
-      }
-
-      #content-wrapper p {
-        font-size: 1.5rem;
-      }
+      h1 { font-size: 1.6rem; }
+      #content-wrapper p { font-size: 1.5rem; }
     }
-    
-    /* タブレット対応 */
-  @media (min-width: 661px) and (max-width: 1200px) {
-
-      body {
-        font-size: 1.5rem;
-      }
-
+    @media (min-width: 661px) and (max-width: 1200px) {
+      body { font-size: 1.5rem; }
       main {
         width: 660px;
-        /*max-width: 100%;*//*タブレットの画面内に収める*/
         margin: 0.5rem auto;
         padding: 0.5rem;
       }
-
-  #content-wrapper {
-    transform: scale(1.00);
-    transform-origin: top center;
-  }
-
-  #content-wrapper select {
-    font-size: 1.5rem;
-  }
-
+      #content-wrapper { transform: scale(1.00); transform-origin: top center; }
+      #content-wrapper select { font-size: 1.5rem; }
       header {
-        /*width: 660px;*/
         margin: 0 auto;
         font-size: 2.0rem;
         padding: 1.2rem 0;
       }
-
-      h1 {
-        font-size: 1.6rem;
-      }
-
-      #content-wrapper p {
-        font-size: 1.5rem;
-      }
+      h1 { font-size: 1.6rem; }
+      #content-wrapper p { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -167,7 +117,6 @@
 <main>
   <div id="content-wrapper">
     <h1>GitHub Pagesで柿木棋譜ビューア</h1>
-
     <p>
       好きな棋譜を選んで再生してみよう！<br>
       スマホはタッチで局面↓↑<br>
@@ -190,36 +139,41 @@
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
+<!-- kj_free.js 本体の読み込み（KIF_FILE_NAMEの定義前に来てOK） -->
+<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
+
+<!-- セレクト処理＋KIF_FILE_NAME設定＋再読み込み -->
 <script>
-const KJ_DIR = "/shogi-kifu/";
-const UPDATE_TIME = 1;
+  const KJ_DIR = "/shogi-kifu/";
+  const UPDATE_TIME = 1;
 
-function onKifuSelect() {
-  const selector = document.getElementById('kifuSelector');
-  const selectedKifu = selector.value;
-  window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const selector = document.getElementById('kifuSelector');
-  const urlParams = new URLSearchParams(window.location.search);
-  const kifuParam = urlParams.get('kifu');
-
-  if (kifuParam) {
-    window.KIF_FILE_NAME = kifuParam;
-    selector.value = kifuParam;
-  } else {
-    window.KIF_FILE_NAME = selector.options[0].value;
-    selector.value = window.KIF_FILE_NAME;
+  function onKifuSelect() {
+    const selector = document.getElementById('kifuSelector');
+    const selectedKifu = selector.value;
+    window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
   }
 
-  console.log("KIF_FILE_NAME =", window.KIF_FILE_NAME); // ✅ 確認用
+  document.addEventListener("DOMContentLoaded", () => {
+    const selector = document.getElementById('kifuSelector');
+    const urlParams = new URLSearchParams(window.location.search);
+    const kifuParam = urlParams.get('kifu');
 
-  load_kifu();
-});
+    if (selector) {
+      if (kifuParam) {
+        KIF_FILE_NAME = kifuParam;
+        selector.value = kifuParam;
+      } else {
+        KIF_FILE_NAME = selector.options[0].value;
+        selector.value = KIF_FILE_NAME;
+      }
+
+      console.log("✅ KIF_FILE_NAME =", KIF_FILE_NAME);
+
+      // 安全のため kj_free.js が先に動いていても上書き実行
+      load_kifu();
+    }
+  });
 </script>
 
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
-  
 </body>
 </html>

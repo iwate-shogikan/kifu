@@ -191,21 +191,10 @@
 </footer>
 
 <!-- 変数と関数 -->
-<script language="javascript" type="text/javascript">
-let KJ_DIR = "/shogi-kifu/";
-let KIF_FILE_NAME = "test.kif";
+<script type="text/javascript">
+const KJ_DIR = "/shogi-kifu/";
+let KIF_FILE_NAME = "";
 const UPDATE_TIME = 1;
-
-// URLパラメータから棋譜ファイル取得
-const urlParams = new URLSearchParams(window.location.search);
-const kifuParam = urlParams.get('kifu');
-if (kifuParam) {
-  KIF_FILE_NAME = kifuParam;
-  const selector = document.getElementById('kifuSelector');
-  if (selector) {
-    selector.value = kifuParam;
-  }
-}
 
 function onKifuSelect() {
   const select = document.getElementById('kifuSelector');
@@ -213,10 +202,30 @@ function onKifuSelect() {
   window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
 }
 
-window.onload = function() {
-  load_kifu();
+window.onload = function () {
+  const selector = document.getElementById('kifuSelector');
+  const urlParams = new URLSearchParams(window.location.search);
+  const kifuParam = urlParams.get('kifu');
+
+  if (selector) {
+    if (kifuParam) {
+      KIF_FILE_NAME = kifuParam;
+      selector.value = kifuParam;
+    } else {
+      // パラメータが無い場合、最初の<option>の値を使用
+      KIF_FILE_NAME = selector.options[0].value;
+      selector.value = KIF_FILE_NAME;
+    }
+  }
+
+  if (KIF_FILE_NAME) {
+    load_kifu();  // kj_free.js 側の関数を呼び出し
+  } else {
+    alert("エラー：棋譜ファイルが指定されていません。");
+  }
 };
 </script>
+
 
 <!-- 最後に本体JS -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>

@@ -7,8 +7,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="/shogi-kifu/favicon.ico" type="image/x-icon" />
 
-  <!-- ✅ 先にグローバル変数を定義（kj_free.js の安全動作のため） -->
-  <script>var KIF_FILE_NAME = "";</script>
+  <!-- グローバル変数を最初に定義 -->
+  <script>
+    var KJ_DIR = "";
+    var KIF_FILE_NAME = "";
+    var UPDATE_TIME = 1;
+  </script>
 
   <style>
     body {
@@ -106,18 +110,10 @@
       #content-wrapper p { font-size: 1.5rem; }
     }
   </style>
-    <script>
-    var KJ_DIR = ""; // ← これを絶対にここで定義！
-    var KIF_FILE_NAME = "";
-    var UPDATE_TIME = 1;
-  </script>
 </head>
 
 <body>
-
-<header>
-  棋譜から学ぶやさしい将棋
-</header>
+<header>棋譜から学ぶやさしい将棋</header>
 
 <main>
   <div id="content-wrapper">
@@ -128,7 +124,6 @@
       PCは Ctrl + マウスホイール上下で盤面サイズ調整
     </p>
 
-    <!-- 棋譜選択セレクトボックス -->
     <select id="kifuSelector" onchange="onKifuSelect()">
       <option value="test.kif">「四間飛車棒銀対策」太地将棋学校1限目</option>
       <option value="henka.kif">分岐有り</option>
@@ -136,22 +131,14 @@
     </select>
   </div>
 
-  <!-- 棋譜ビューアの表示場所 -->
   <div id="KJ_DIV"></div>
 </main>
 
-<footer>
-  &copy; 2025 やさしい将棋プロジェクト
-</footer>
+<footer>&copy; 2025 やさしい将棋プロジェクト</footer>
 
-<!-- kj_free.js 本体の読み込み（KIF_FILE_NAMEの定義前に来てOK） -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 <script>
-  var KJ_DIR = ""; // .kifがindex.htmlと同じ階層
-  var KIF_FILE_NAME = "";
-  var UPDATE_TIME = 1;
-
   function onKifuSelect() {
     const selector = document.getElementById('kifuSelector');
     const selectedKifu = selector.value;
@@ -168,14 +155,9 @@
       selector.value = kifuParam;
     } else {
       const defaultKifu = selector.options[0].value;
-
-      // ✅ パラメータを付加してページをリロード（これで再生される）
       const newUrl = window.location.origin + window.location.pathname + "?kifu=" + encodeURIComponent(defaultKifu);
-      window.location.replace(newUrl); // ← これ重要！！
-      return; // ← これがないと下で load_kifu() が走る
+      window.location.replace(newUrl);
     }
-
-    // ✅ kj_free.js が自動で load_kifu() を呼ぶのでここで呼ばない！
   });
 </script>
 

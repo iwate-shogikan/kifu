@@ -147,8 +147,17 @@
 <!-- kj_free.js 本体の読み込み（KIF_FILE_NAMEの定義前に来てOK） -->
 <script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
-<!-- セレクト処理＋KIF_FILE_NAME設定＋再読み込み -->
 <script>
+  var KJ_DIR = "";
+  var KIF_FILE_NAME = "";
+  var UPDATE_TIME = 1;
+
+  function onKifuSelect() {
+    const selector = document.getElementById('kifuSelector');
+    const selectedKifu = selector.value;
+    window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     const selector = document.getElementById('kifuSelector');
     const urlParams = new URLSearchParams(window.location.search);
@@ -158,14 +167,12 @@
       KIF_FILE_NAME = kifuParam;
       selector.value = kifuParam;
     } else {
-      KIF_FILE_NAME = selector.options[0].value;
-      selector.value = KIF_FILE_NAME;
+      const defaultKifu = selector.options[0].value;
+      // ✅ パラメータ付URLで再読み込み → kj_free.js に任せる
+      window.location.href = "?kifu=" + encodeURIComponent(defaultKifu);
     }
 
-    console.log("✅ KJ_DIR =", KJ_DIR);
-    console.log("✅ KIF_FILE_NAME =", KIF_FILE_NAME);
-
-    load_kifu(); // kj_free.js 内で読み込み済でも明示再実行
+    // ❌ load_kifu() は呼ばない → kj_free.js 側が自動でやる！
   });
 </script>
 

@@ -174,71 +174,52 @@
       PCは Ctrl + マウスホイール上下で盤面サイズ調整
     </p>
 
-<!-- セレクトボックス -->
-<select id="kifuSelector" onchange="onKifuSelect()">
-  <option value="20250510中塚西澤.kif">第54回　県支部対抗戦団体決勝先鋒戦</option>
-  <option value="test.kif">「四間飛車棒銀対策」太地将棋学校1限目</option>
-  <option value="henka.kif">分岐有り</option>
-  <option value="tume.kif">詰め将棋</option>
-</select>
-    
+    <!-- 棋譜選択セレクトボックス -->
+    <select id="kifuSelector" onchange="onKifuSelect()">
+      <option value="test.kif">「四間飛車棒銀対策」太地将棋学校1限目</option>
+      <option value="henka.kif">分岐有り</option>
+      <option value="tume.kif">詰め将棋</option>
+    </select>
   </div>
 
-<!-- 棋譜ビューアの表示場所 -->
-<div id="KJ_DIV"></div>
-
-<script type="text/javascript">
-// 変数定義は1回だけ
-const KJ_DIR = "/shogi-kifu/";
-let KIF_FILE_NAME = "";
-const UPDATE_TIME = 1;
-
-// 棋譜選択時の挙動
-function onKifuSelect() {
-  const select = document.getElementById('kifuSelector');
-  const selectedKifu = select.value;
-  window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
-}
-
-// 初期化
-window.addEventListener("DOMContentLoaded", () => {
-  const selector = document.getElementById('kifuSelector');
-  const urlParams = new URLSearchParams(window.location.search);
-  const kifuParam = urlParams.get('kifu');
-
-  if (selector) {
-    if (kifuParam) {
-      KIF_FILE_NAME = kifuParam;
-      selector.value = kifuParam;
-    } else {
-      KIF_FILE_NAME = selector.value;
-    }
-  }
-
-  if (KIF_FILE_NAME) {
-    load_kifu();  // この関数は kj_free.js にある想定
-  } else {
-    alert("エラー 001：棋譜ファイル名 KIF_FILE_NAME の指定がありません。");
-  }
-});
-</script>
-
-<!-- kj_free.js の読込 -->
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
-
-
-  <p>ここからはLishogiの動作テストです。</p>
-
-  <iframe src="https://lishogi.org/embed/U7BPc0lE#33?theme=auto&bg=auto"
-width=600 height=400 frameborder=0></iframe>
-
-  
+  <!-- 棋譜ビューアの表示場所 -->
+  <div id="KJ_DIV"></div>
 </main>
 
 <footer>
   &copy; 2025 やさしい将棋プロジェクト
 </footer>
 
+<!-- 変数と関数 -->
+<script language="javascript" type="text/javascript">
+let KJ_DIR = "/shogi-kifu/";
+let KIF_FILE_NAME = "test.kif";
+const UPDATE_TIME = 1;
+
+// URLパラメータから棋譜ファイル取得
+const urlParams = new URLSearchParams(window.location.search);
+const kifuParam = urlParams.get('kifu');
+if (kifuParam) {
+  KIF_FILE_NAME = kifuParam;
+  const selector = document.getElementById('kifuSelector');
+  if (selector) {
+    selector.value = kifuParam;
+  }
+}
+
+function onKifuSelect() {
+  const select = document.getElementById('kifuSelector');
+  const selectedKifu = select.value;
+  window.location.href = "?kifu=" + encodeURIComponent(selectedKifu);
+}
+
+window.onload = function() {
+  load_kifu();
+};
+</script>
+
+<!-- 最後に本体JS -->
+<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>
 </html>

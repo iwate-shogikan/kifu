@@ -160,15 +160,17 @@
     const selector = document.getElementById('kifuSelector');
     const urlParams = new URLSearchParams(window.location.search);
     const kifuParam = urlParams.get('kifu');
+
     if (kifuParam) {
       selector.value = kifuParam;
     } else {
       const defaultKifu = selector.options[0].value;
-      const newUrl = window.location.origin + window.location.pathname + "?kifu=" + encodeURIComponent(defaultKifu);
-      window.location.replace(newUrl);
+      KIF_FILE_NAME = defaultKifu; // ← ここで変数にだけ代入
+      selector.value = defaultKifu;
     }
   });
 </script>
+
   
 </body>
 </html>

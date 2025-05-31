@@ -6,11 +6,6 @@
   In your repository settings: enable template repository, add your 1280×640 social image, auto delete head branches.
   Add your open source license, GitHub uses MIT license.
 -->
-## 🌐 公開中のブログ
-
-🎉 このリポジトリで作ったブログは、以下のURLから見られます！
-
-👉 [https://hitoshikudo711.github.io/shogi-kifu/](https://hitoshikudo711.github.io/shogi-kifu/)
 
 # GitHub Pages
 

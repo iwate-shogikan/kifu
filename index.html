@@ -8,7 +8,7 @@
 
   <!-- グローバル変数を最初に定義 -->
   <script>
-    var KJ_DIR = "";
+    var KJ_DIR = "/kifu/kj_free/";
     var KIF_FILE_NAME = "";
     var UPDATE_TIME = 1;
   </script>
@@ -140,7 +140,7 @@
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu') || "20250510中塚西澤.kif";
 
-  var KJ_DIR = "";
+  var KJ_DIR = "/kifu/kj_free/";
   var KIF_FILE_NAME = kifuParam;
   var UPDATE_TIME = 1;
   var START_TESUU = 0; // ← 初手表示を強制

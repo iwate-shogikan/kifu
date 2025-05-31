@@ -113,11 +113,11 @@
 </head>
 
 <body>
-<header>棋譜から学ぶやさしい将棋</header>
+<header>いわて将棋館 Tsudaka blog 2</header>
 
 <main>
   <div id="content-wrapper">
-    <h1>GitHub Pagesで柿木棋譜ビューア</h1>
+    <h1>岩手のアマチュア棋戦の棋譜</h1>
     <p>
       好きな棋譜を選んで再生してみよう！<br>
       スマホはタッチで局面↓↑<br>
@@ -141,13 +141,13 @@
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu') || "20250510中塚西澤.kif";
 
-  var KJ_DIR = "/shogi-kifu/kifu/kj_free107/kj_free/";
+  var KJ_DIR = "kifu/kj_free107/kj_free/";
   var KIF_FILE_NAME = kifuParam;
   var UPDATE_TIME = 1;
   var START_TESUU = 0; // ← 初手表示を強制
 </script>
 
-<script src="/shogi-kifu/kifu/kj_free107/kj_free/kj_free.js"></script>
+<script src="kifu/kj_free107/kj_free/kj_free.js"></script>
 
 <script>
   function onKifuSelect() {

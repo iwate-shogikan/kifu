@@ -32,6 +32,10 @@
     #KJ_DIV {
       margin-top: 2rem;
     }
+    #kifuDescription {
+      font-size: 1.2rem;
+      margin-top: 1rem;
+    }
     footer {
       margin-top: 3rem;
       color: #888;
@@ -44,27 +48,39 @@
 <header>棋譜再生 - いわて将棋館</header>
 
 <main>
-  <p>再生中の棋譜：<span id="kifuFilename">(読み込み中...)</span></p>
+  <p id="kifuDescription">棋譜情報を読み込み中...</p>
   <div id="KJ_DIV"></div>
 </main>
 
 <footer>&copy; 2025 いわて将棋館</footer>
 
 <script>
-  // URLパラメータから棋譜ファイル名を取得
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu') || "";
 
-  document.getElementById("kifuFilename").textContent = kifuParam;
+  // 説明をJSONから読み込んで表示
+  fetch("data/kifu_list.json")
+    .then(response => response.json())
+    .then(data => {
+      const match = data.find(item => item.file === kifuParam);
+      const desc = document.getElementById("kifuDescription");
+      if (match) {
+        desc.innerHTML = `<strong>${match.title}</strong>（${match.date}）<br>${match.players}`;
+      } else {
+        desc.textContent = "棋譜情報が見つかりませんでした。";
+      }
+    })
+    .catch(err => {
+      document.getElementById("kifuDescription").textContent = "棋譜情報の読み込みに失敗しました。";
+    });
 
-  // ↓適宜調整：棋譜ファイルとビューワスクリプトのパス
+  // ビューア起動用グローバル変数
   var KJ_DIR = "kifu/kj_free107/kj_free/";
   var KIF_FILE_NAME = kifuParam;
   var UPDATE_TIME = 1;
-  var START_TESUU = 0; // 初手表示
+  var START_TESUU = 0;
 </script>
 
-<!-- ビューア本体 -->
 <script src="kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>

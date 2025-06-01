@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>棋譜ビューア - いわて将棋館</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f0f0d8;
+      font-family: 'Noto Sans JP', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #2a2a2a;
+      font-size: 1rem;
+      text-align: center;
+    }
+    header {
+      background-color: #fff;
+      padding: 1.5rem 0;
+      font-size: 2rem;
+      border-bottom: 2px solid #ccc;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #KJ_DIV {
+      margin-top: 2rem;
+    }
+    footer {
+      margin-top: 3rem;
+      color: #888;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>棋譜ビューア - いわて将棋館</header>
+
+<main>
+  <p>再生中の棋譜：<span id="kifuFilename">(読み込み中...)</span></p>
+  <div id="KJ_DIV"></div>
+</main>
+
+<footer>&copy; 2025 いわて将棋館</footer>
+
+<script>
+  // URLパラメータから棋譜ファイル名を取得
+  const urlParams = new URLSearchParams(window.location.search);
+  const kifuParam = urlParams.get('kifu') || "";
+
+  document.getElementById("kifuFilename").textContent = kifuParam;
+
+  // ↓適宜調整：棋譜ファイルとビューワスクリプトのパス
+  var KJ_DIR = "kj_free107/kj_free/";
+  var KIF_FILE_NAME = kifuParam;
+  var UPDATE_TIME = 1;
+  var START_TESUU = 0; // 初手表示
+</script>
+
+<!-- ビューア本体 -->
+<script src="kj_free107/kj_free/kj_free.js"></script>
+
+</body>
+</html>

@@ -65,8 +65,8 @@
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
-  const kifuParam = urlParams.get('kifu') || "";
-  const kifuDir = urlParams.get('dir') || "kifuA";  // ← デフォルトは kifuA
+  const kifuParam = urlParams.get("kifu") || "";
+  const kifuDir = urlParams.get("kifudir") || "kifuA";
 
   // 棋譜情報の表示処理（data/kifu_list.json の該当データを探す）
   fetch("data/kifu_list.json")

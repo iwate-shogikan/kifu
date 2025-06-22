@@ -29,14 +29,14 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-  main a {
-    color: #006633;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  main a:hover {
-    text-decoration: underline;
-  }
+    main a {
+      color: #006633;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    main a:hover {
+      text-decoration: underline;
+    }
     #KJ_DIV {
       margin-top: 2rem;
     }
@@ -58,7 +58,6 @@
 <main>
   <p id="kifuDescription">棋譜情報を読み込み中...</p>
   <div id="KJ_DIV"></div>
-    <!-- ← 一覧に戻るリンク -->
   <p><a href="index.html">← 一覧に戻る</a></p>
 </main>
 
@@ -67,12 +66,15 @@
 <script>
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get('kifu') || "";
+  const kifuDir = urlParams.get('dir') || "kifuA";  // ← デフォルトは kifuA
 
-  // 説明をJSONから読み込んで表示
+  // 棋譜情報の表示処理（data/kifu_list.json の該当データを探す）
   fetch("data/kifu_list.json")
     .then(response => response.json())
     .then(data => {
-      const match = data.find(item => item.file === kifuParam);
+      const match = data.find(item =>
+        item.file === kifuParam && item.dir === kifuDir
+      );
       const desc = document.getElementById("kifuDescription");
       if (match) {
         desc.innerHTML = `<strong>${match.title}</strong>（${match.date}）<br>${match.players}`;
@@ -84,13 +86,14 @@
       document.getElementById("kifuDescription").textContent = "棋譜情報の読み込みに失敗しました。";
     });
 
-  // ビューア起動用グローバル変数
-  var KJ_DIR = "kifu/kj_free107/kj_free/";
+  // ビューア用変数
+  var KJ_DIR = `${kifuDir}/`;  // 例：kifuA/
   var KIF_FILE_NAME = kifuParam;
   var UPDATE_TIME = 1;
   var START_TESUU = 0;
 </script>
 
+<!-- ビューアスクリプトは固定位置 -->
 <script src="kifu/kj_free107/kj_free/kj_free.js"></script>
 
 </body>

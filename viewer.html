@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>棋譜再生 - いわて将棋館</title>
+  <title>棋譜再生</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     body {
@@ -53,20 +53,26 @@
 </head>
 <body>
 
-<header>棋譜再生 - いわて将棋館</header>
+<header>棋譜再生</header>
 
 <main>
   <p id="kifuDescription">棋譜情報を読み込み中...</p>
   <div id="KJ_DIV"></div>
-  <p><a href="index.html">← 一覧に戻る</a></p>
+  <p>
+    <a href="index.html">← 一覧に戻る</a>　/　<a id="backToDir" style="display:none;" href="#">← 分類に戻る</a>
+  </p>
 </main>
-
-<footer>&copy; 2025 いわて将棋館</footer>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
-  const kifuParam = urlParams.get("kifu") || "";
-  const kifuDir = urlParams.get("kifudir") || "kifuA";
+  const kifuParam = urlParams.get("kifu") || "";           // 例: 20250510中塚西澤.kif
+  const kifuDir = urlParams.get("kifudir") || "kifuA";     // 例: kifuA
+
+  // 棋譜ファイルのパスを明示的に指定
+  const KIF_FILE_NAME = `data/${kifuDir}/${kifuParam}`;
+
+  // kj_free.js のある場所（画像も含む）
+  const KJ_DIR = "kifu/kj_free107/kj_free/";
 
   // 棋譜情報の表示処理（data/kifu_list.json の該当データを探す）
   fetch("data/kifu_list.json")
@@ -87,14 +93,21 @@
     });
 
   // ビューア用変数
-  var KJ_DIR = `${kifuDir}/`;  // 例：kifuA/
-  var KIF_FILE_NAME = kifuParam;
   var UPDATE_TIME = 1;
   var START_TESUU = 0;
+
+  // 「分類に戻る」リンク設定
+  const backToDirLink = document.getElementById("backToDir");
+  if (kifuDir) {
+    backToDirLink.href = `data/${encodeURIComponent(kifuDir)}.html`;
+    backToDirLink.textContent = `← ${kifuDir} に戻る`;
+    backToDirLink.style.display = "inline";
+  }
 </script>
 
 <!-- ビューアスクリプトは固定位置 -->
 <script src="kifu/kj_free107/kj_free/kj_free.js"></script>
+
 
 </body>
 </html>

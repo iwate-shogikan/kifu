@@ -1761,35 +1761,7 @@
     "title": "第54回　県支部対抗戦団体決勝先鋒戦",
     "players": "中塚祐樹二段(岩手中高) vs 西澤敦史三段(盛岡北)",
     "date": "2025-05-10",
-    "dir": "kifuA"
-  },
-  {
-    "file": "henka.kif",
-    "title": "棋戦名",
-    "players": "先手56789012全 vs 後手567890全12",
-    "date": "",
-    "dir": "kifuA"
-  },
-  {
-    "file": "taichi_shiken_class1.kif",
-    "title": "taichi_shiken_class1",
-    "players": "先手 vs 後手",
-    "date": "",
-    "dir": "kifuA"
-  },
-  {
-    "file": "test.kif",
-    "title": "test",
-    "players": "先手 vs 後手",
-    "date": "",
-    "dir": "kifuA"
-  },
-  {
-    "file": "tume.kif",
-    "title": "tume",
-    "players": "",
-    "date": "",
-    "dir": "kifuA"
+    "dir": "kif2"
   },
   {
     "file": "20220403早繰2二銀.kif",

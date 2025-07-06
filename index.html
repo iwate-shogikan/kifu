@@ -46,10 +46,38 @@
     a.kifu-link:hover {
       text-decoration: underline;
     }
+    @media (max-width: 660px) {
+      body { font-size: 1.5rem; }
+      main {
+        width: 600px;
+        margin: 0.5rem auto;
+        padding: 0.5rem;
+      }
+      #content-wrapper { transform: scale(1.00); transform-origin: top center; }
+      #content-wrapper select { font-size: 1.5rem; }
+      header {
+        width: 600px;
+        margin: 0 auto;
+        font-size: 2.0rem;
+        padding: 1.2rem 0;
+      }
+      h1 { font-size: 1.6rem; }
+      #content-wrapper p { font-size: 1.5rem; }
+    }
+    @media (min-width: 661px) and (max-width: 1200px) {
+      body { font-size: 1.5rem; }
+      main {
+        width: 660px;
+        margin: 0.5rem auto;
+        padding: 0.5rem;
+      }
+      #content-wrapper { transform: scale(1.00); transform-origin: top center; }
+      #content-wrapper select { font-size: 1.5rem; }
   </style>
 </head>
 <body>
 <main>
+  <div id="content-wrapper">
   <h2>棋譜一覧（最新棋譜から表示）</h2>
   柿木棋譜ビューアで再生されます
   
@@ -4385,6 +4413,7 @@
     
     </tbody>
   </table>
+  </div>
 </main>
 </body>
 </html>

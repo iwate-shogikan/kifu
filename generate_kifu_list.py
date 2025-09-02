@@ -1,4 +1,4 @@
-import json
+ zsximport json
 from pathlib import Path
 from datetime import datetime
 

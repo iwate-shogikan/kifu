@@ -10,9 +10,10 @@ generate_index_with_search.py
   * マッチ箇所ハイライト (<mark>)
   * 名前の正規化強化（さん/君/先生/プロ等の除去、かな⇄カナ、段位/称号/括弧の除去、末尾「五段」など連結も除去）
   * スペース区切り AND 検索
-- 新規:
   * 列ヘッダクリックでソート（日時/タイトル/分類、昇降切替）  ※初期は「日時：降順」
   * 件数ゼロ時に「該当する項目がありません」行を表示
+- 追加：
+  * 「条件クリア」押下でソートも既定（日時降順）にリセット
 """
 
 import json
@@ -433,7 +434,13 @@ def build_html(items):
   }
 
   function clearAll(){
+    // 入力条件をクリア
     qTitle.value = ""; qPlayers.value = ""; qDir.value = "";
+    // ★ ソートを既定（日時降順）にリセット
+    sortKey = "date";
+    sortAsc = false;
+    sortRows();
+    // 再適用
     apply();
   }
 
@@ -485,8 +492,8 @@ def build_html(items):
     if(t) qTitle.value = t;
     if(p) qPlayers.value = p;
     if(d) qDir.value = d;
-    setSortIndicator();
-    sortRows();                 // 念のため現在の状態を並べ替え（初期は日付降順）
+    sortKey = "date"; sortAsc = false;
+    sortRows();                 // 初期は日付降順
     apply({skipHashUpdate:true});
     window.addEventListener("hashchange", ()=>{
       const {t,p,d} = parseHash();

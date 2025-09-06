@@ -48,71 +48,73 @@ def load_items(path: Path):
         })
     return items
 
-def unique_dirs(items):
-    s = []
-    seen = set()
-    for it in items:
-        d = it["dir"] or ""
-        if d not in seen:
-            seen.add(d); s.append(d)
-    return s
-
 def build_html(items):
     # 分類セレクトの選択肢
+    def unique_dirs(items):
+        seen = set(); out = []
+        for it in items:
+            d = it["dir"] or ""
+            if d not in seen:
+                seen.add(d); out.append(d)
+        return out
+
     dir_options = ['<option value="">（すべて）</option>'] + [
         f'<option value="{d}">{d or "（未分類）"}</option>' for d in unique_dirs(items)
     ]
 
-    # アイテムを data-* 属性で埋め込み（JSでフィルタ）
-    def row(it):
+    # 1行表示（kifuサイトの書式に寄せる）
+    def line(it):
         href = f'viewer.html?kifu={it["file"]}&kifudir={it["dir"]}'
         date_disp = it["date"]
         try:
-            # YYYY-MM-DD → YYYY/MM/DD 表示
-            date_disp = datetime.strptime(it["date"], "%Y-%m-%d").strftime("%Y/%m/%d")
+            date_disp = datetime.strptime(it["date"], "%Y-%m-%d").strftime("%Y-%m-%d")
         except Exception:
             pass
+        # 分類はページ遷移ではなく「ワンクリックで分類フィルタ」が便利
+        dir_txt = it["dir"] or "（未分類）"
+        dir_link = (f"<a href='#' class='dirlink' data-dir='{it['dir']}'>{dir_txt}</a>")
 
         return f'''
-        <tr class="row"
-            data-title="{it["title"]}"
-            data-players="{it["players"]}"
-            data-dir="{it["dir"]}">
-          <td>{date_disp}</td>
-          <td><a href="{href}">{it["title"]}</a></td>
-          <td>{it["players"]}</td>
-          <td>{it["dir"] or "（未分類）"}</td>
-        </tr>
-        '''
+<li class="item"
+    data-title="{it["title"]}"
+    data-players="{it["players"]}"
+    data-dir="{it["dir"]}">
+  <span class="date">{date_disp}</span>
+  <span class="title">【<a href="{href}">{it["title"]}</a>】</span>
+  <span class="players">{it["players"]}</span>
+  <span class="dir"></span>
+</li>
+'''
 
-    rows_html = "\n".join(row(it) for it in items)
+    list_html = "\n".join(line(it) for it in items)
 
-    # シンプルCSS + バニラJS
     return f"""<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>棋譜一覧（検索フィルタ付き）</title>
+<title>棋譜一覧（最新棋譜から表示）</title>
 <style>
-  body{{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic UI',sans-serif; margin:16px;}}
-  h1{{margin:0 0 12px 0; font-size:20px;}}
-  .toolbar{{display:grid; grid-template-columns:1fr 1fr 220px 120px; gap:8px; margin-bottom:12px; align-items:end}}
-  .toolbar label{{font-size:12px; color:#555}}
-  input,select{{width:100%; padding:8px; border:1px solid #ddd; border-radius:8px}}
-  table{{width:100%; border-collapse:collapse}}
-  th,td{{padding:10px; border-bottom:1px solid #eee; text-align:left; vertical-align:top}}
-  th{{background:#fafafa; position:sticky; top:0}}
-  .muted{{color:#666; font-size:12px}}
-  .count{{font-size:12px; color:#444; text-align:right; margin-bottom:8px}}
-  @media (max-width: 720px) {{
-    .toolbar{{grid-template-columns:1fr;}}
-    th:nth-child(3), td:nth-child(3){{display:table-cell}} /* 対局者は残す */
-  }}
+  :root{{--fg:#111;--muted:#666;--line:#eee}}
+  body{{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans JP','Hiragino Kaku Gothic ProN','Yu Gothic UI',sans-serif;margin:16px;color:var(--fg)}}
+  h1{{margin:0 0 8px 0;font-size:20px}}
+  .sub{{color:var(--muted);margin:0 0 12px 0;font-size:14px}}
+  .toolbar{{display:grid;grid-template-columns:1fr 1fr 220px 110px;gap:8px;margin:12px 0 8px;align-items:end}}
+  .toolbar label{{font-size:12px;color:#555}}
+  input,select,button{{width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;background:#fff}}
+  .count{{font-size:12px;color:#444;text-align:right;margin-bottom:6px}}
+  ul.list{{list-style:none;margin:0;padding:0}}
+  .item{{display:flex;flex-wrap:wrap;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--line)}}
+  .item .date{{min-width:105px}}
+  .item .title a{{text-decoration:none}}
+  .item .dir a{{text-decoration:none}}
+  .dirlink{{cursor:pointer}}
+  @media (max-width:720px){{.toolbar{{grid-template-columns:1fr}} .item .players{{flex-basis:100%}}}}
 </style>
 </head>
 <body>
-  <h1>棋譜一覧</h1>
+  <h1>棋譜一覧（最新棋譜から表示）</h1>
+  <p class="sub">柿木棋譜ビューアで再生されます　日付　棋戦名　対局者　分類</p>
 
   <div class="toolbar">
     <div>
@@ -121,7 +123,7 @@ def build_html(items):
     </div>
     <div>
       <label>対局者名で検索</label>
-      <input id="q-players" type="text" placeholder="例：佐藤 / 渡辺 など 部分一致OK">
+      <input id="q-players" type="text" placeholder="例：佐藤 / 渡辺（部分一致OK）">
     </div>
     <div>
       <label>分類を選択</label>
@@ -130,84 +132,63 @@ def build_html(items):
       </select>
     </div>
     <div>
-      <button id="btn-clear" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; background:#fff">条件クリア</button>
+      <button id="btn-clear">条件クリア</button>
     </div>
   </div>
 
   <div class="count"><span id="count"></span> 件表示</div>
 
-  <table id="tbl">
-    <thead>
-      <tr>
-        <th style="width:110px">日付</th>
-        <th>タイトル</th>
-        <th style="width:280px">対局者</th>
-        <th style="width:140px">分類</th>
-      </tr>
-    </thead>
-    <tbody id="tbody">
-      {rows_html}
-    </tbody>
-  </table>
+  <ul id="list" class="list">
+    {list_html}
+  </ul>
 
 <script>
-(function() {{
-  const $ = (s)=>document.querySelector(s);
-  const $$ = (s)=>Array.from(document.querySelectorAll(s));
+(function(){{
+  const $ = s=>document.querySelector(s);
+  const $$ = s=>Array.from(document.querySelectorAll(s));
+  const qTitle=$("#q-title"), qPlayers=$("#q-players"), qDir=$("#q-dir");
+  const btnClear=$("#btn-clear"), rows=$$("#list .item"), count=$("#count");
 
-  const qTitle = $("#q-title");
-  const qPlayers = $("#q-players");
-  const qDir = $("#q-dir");
-  const btnClear = $("#btn-clear");
-  const rows = $$("#tbody .row");
-  const count = $("#count");
+  function norm(s){{return (s||"").toLowerCase().replace(/\\s+/g,"").normalize('NFKC');}}
 
-  function norm(s) {{
-    return (s||"").toLowerCase().replace(/\\s+/g,"").normalize('NFKC');
-  }}
-
-  function apply() {{
-    const t = norm(qTitle.value);
-    const p = norm(qPlayers.value);
-    const d = qDir.value;
-
-    let shown = 0;
-    rows.forEach(tr => {{
-      const title = norm(tr.dataset.title);
-      const players = norm(tr.dataset.players);
-      const dir = tr.dataset.dir;
-
-      const okTitle = !t || title.includes(t);
-      const okPlayers = !p || players.includes(p);
-      const okDir = !d || dir === d;
-
-      const visible = okTitle && okPlayers && okDir;
-      tr.style.display = visible ? "" : "none";
-      if (visible) shown++;
+  function apply(){{
+    const t=norm(qTitle.value), p=norm(qPlayers.value), d=qDir.value;
+    let shown=0;
+    rows.forEach(li=>{{
+      const okTitle=!t||norm(li.dataset.title).includes(t);
+      const okPlayers=!p||norm(li.dataset.players).includes(p);
+      const okDir=!d||li.dataset.dir===d;
+      const on= okTitle && okPlayers && okDir;
+      li.style.display = on ? "" : "none";
+      if(on) shown++;
     }});
-    count.textContent = shown;
+    count.textContent=shown;
   }}
 
-  function clearAll(){{
-    qTitle.value = "";
-    qPlayers.value = "";
-    qDir.value = "";
-    apply();
-  }}
+  function clearAll(){{ qTitle.value=""; qPlayers.value=""; qDir.value=""; apply(); }}
 
-  // 入力イベント
   qTitle.addEventListener("input", apply);
   qPlayers.addEventListener("input", apply);
   qDir.addEventListener("change", apply);
   btnClear.addEventListener("click", clearAll);
 
-  // 初期表示
+  // 分類文字のクリックでその分類に絞り込み
+  document.addEventListener("click", (e)=>{{
+    const a = e.target.closest(".dirlink");
+    if(!a) return;
+    e.preventDefault();
+    const val = a.getAttribute("data-dir")||"";
+    qDir.value = val;
+    qDir.dispatchEvent(new Event("change"));
+  }});
+
   apply();
 }})();
 </script>
 </body>
 </html>
 """
+
 
 def main():
     if not DATA_JSON.exists():

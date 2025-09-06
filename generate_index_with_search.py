@@ -49,7 +49,7 @@ def clean_player_name(s: str) -> str:
     t = re.sub(rf"^(?:{TITLE_RE})+", "", t)
     # 末尾側に連結している称号群
     t = re.sub(rf"(?:{TITLE_RE})+$", "", t)
-    # 末尾の「段」「級」を単独で落とす
+    # 末尾の 段/級
     t = re.sub(r"(?:十|九|八|七|六|五|四|三|二|初)?段$", "", t)
     t = re.sub(r"(?:\d+)?級$", "", t)
     # 独立トークンの称号
@@ -263,7 +263,7 @@ def build_html(items):
 
 <script>
 // === 検索ユーティリティ ===
-(function(){
+(function(){{
   const $  = (s)=>document.querySelector(s);
   const $$ = (s)=>Array.from(document.querySelectorAll(s));
 
@@ -275,173 +275,161 @@ def build_html(items):
   const count    = $("#count");
 
   // 基本正規化: NFKC + 小文字 + 全空白を半角に
-  function nfkcLower(s){ return (s||"").normalize('NFKC').toLowerCase(); }
+  function nfkcLower(s){{ return (s||"").normalize('NFKC').toLowerCase(); }}
   // カタカナ化（ひらがな→カタカナ）
-  function toKatakana(s){
-    return (s||"").replace(/[ぁ-ゖ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
-  }
+  function toKatakana(s){{ return (s||"").replace(/[ぁ-ゖ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60)); }}
   // タイトル用の正規化
-  function normTitle(s){ return nfkcLower(s); }
+  function normTitle(s){{ return nfkcLower(s); }}
   // 敬称/称号、括弧などの除去（JS側）
-  function cleanNameForSearch(s){
-    if(!s) return "";
-    let t = nfkcLower(s).replace(/\u3000/g," ").trim(); // 全角空白→半角
+  function cleanNameForSearch(s){{ 
+    if(!s) return ""; 
+    let t = nfkcLower(s).replace(/\\u3000/g," ").trim(); // 全角空白→半角
     // 括弧内
     t = t.replace(/[（(][^）)]*[）)]/g, " ");
     // 段位/称号
     const tokens = ["十段","九段","八段","七段","六段","五段","四段","三段","二段","初段",
                     "名人","竜王","王位","王座","王将","棋王","叡王","棋聖","女流","アマ"];
-    // NFKC/小文字済みなので一旦そのまま処理（漢字はそのままでも一致）
-    tokens.forEach(w=>{
-      const re = new RegExp(w, "g");
-      t = t.replace(re, " ");
-    });
+    tokens.forEach(w=>{{ t = t.replace(new RegExp(w,"g"), " "); }});
     // 末尾の 段/級
     t = t.replace(/(?:十|九|八|七|六|五|四|三|二|初)?段$/g, " ");
     t = t.replace(/(?:\\d+)?級$/g, " ");
     // 敬称等
     t = t.replace(/(さん|君|くん|ちゃん|様|氏|殿|先生|師匠|プロ)$/g, " ");
     // 空白縮約
-    t = t.replace(/\s+/g, " ").trim();
+    t = t.replace(/\\s+/g, " ").trim();
     return t;
-  }
+  }}
   // プレイヤー名比較用の正規化（かな⇄カナ対応 + 空白除去）
-  function normPlayers(s){
-    return toKatakana(cleanNameForSearch(s)).replace(/\s+/g,"");
-  }
+  function normPlayers(s){{ return toKatakana(cleanNameForSearch(s)).replace(/\\s+/g,""); }}
   // クエリをトークン配列（AND）に
-  function tokensFromTitleInput(s){
-    s = nfkcLower(s).replace(/\u3000/g," ").trim();
+  function tokensFromTitleInput(s){{ 
+    s = nfkcLower(s).replace(/\\u3000/g," ").trim();
     if(!s) return [];
-    return s.split(/\s+/).filter(Boolean);
-  }
-  function tokensFromPlayersInput(s){
-    s = cleanNameForSearch(s);                // 敬称/称号/括弧など除去
-    s = toKatakana(s).replace(/\u3000/g," ").trim();
+    return s.split(/\\s+/).filter(Boolean);
+  }}
+  function tokensFromPlayersInput(s){{ 
+    s = cleanNameForSearch(s);
+    s = toKatakana(s).replace(/\\u3000/g," ").trim();
     if(!s) return [];
-    return s.split(/\s+/).filter(Boolean).map(x=>x.replace(/\s+/g,""));
-  }
+    return s.split(/\\s+/).filter(Boolean).map(x=>x.replace(/\\s+/g,""));
+  }}
 
-  // ハイライト: 指定トークン（配列）を <mark> で囲む（大文字小文字無視/NFKCで比較）
-  function highlightText(rawText, tokens){
+  // ハイライト: 指定トークン（配列）を <mark> で囲む
+  function highlightText(rawText, tokens){{ 
     if(!rawText || !tokens.length) return rawText;
-    let html = rawText; // 生テキストから開始
-    // 重複や空は除去、長いトークン優先で置換
+    let html = rawText;
     const uniq = Array.from(new Set(tokens.filter(Boolean))).sort((a,b)=>b.length-a.length);
-    for(const tk of uniq){
-      const escaped = tk.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      // 大文字小文字を無視しつつNFKC一致を近似: 直接置換（NFKC相違は完全には拾えないが実用上OK）
+    for(const tk of uniq){{ 
+      const escaped = tk.replace(/[.*+?^${{}}()|[\\]\\\\]/g, "\\\\$&");
       const re = new RegExp(escaped, "gi");
-      html = html.replace(re, m=>`<mark>${m}</mark>`);
-    }
+      html = html.replace(re, m=>`<mark>${{m}}</mark>`);
+    }}
     return html;
-  }
+  }}
 
   // ハッシュ保存/復元
-  function updateHash(){
+  function updateHash(){{ 
     const t = encodeURIComponent(qTitle.value||"");
     const p = encodeURIComponent(qPlayers.value||"");
     const d = encodeURIComponent(qDir.value||"");
-    const newHash = `#t=${t}&p=${p}&d=${d}`;
+    const newHash = `#t=${{t}}&p=${{p}}&d=${{d}}`;
     const url = location.pathname + location.search + newHash;
     history.replaceState(null, "", url);
-  }
-  function parseHash(){
+  }}
+  function parseHash(){{ 
     const h = (location.hash||"").replace(/^#/,"");
     const params = new URLSearchParams(h);
-    return {
+    return {{
       t: params.get("t")? decodeURIComponent(params.get("t")) : "",
       p: params.get("p")? decodeURIComponent(params.get("p")) : "",
       d: params.get("d")? decodeURIComponent(params.get("d")) : ""
-    };
-  }
+    }};
+  }}
 
   // メイン適用
-  function apply({skipHashUpdate=false}={}){
+  function apply({{skipHashUpdate=false}}={{}}){{ 
     const tTokens = tokensFromTitleInput(qTitle.value);        // AND
     const pTokens = tokensFromPlayersInput(qPlayers.value);    // AND（カナ化済）
 
     let shown = 0;
-    rows.forEach(tr=>{
+    rows.forEach(tr=>{{ 
       const titleNorm   = normTitle(tr.dataset.title);
       const playersNorm = normPlayers(tr.dataset.players);
       const dir         = tr.dataset.dir || "";
 
-      const okTitle = tTokens.every(tok => titleNorm.includes(tok));
+      const okTitle   = tTokens.every(tok => titleNorm.includes(tok));
       const okPlayers = pTokens.every(tok => playersNorm.includes(tok));
-      const okDir = !qDir.value || dir === qDir.value;
+      const okDir     = !qDir.value || dir === qDir.value;
 
       const visible = okTitle && okPlayers && okDir;
       tr.style.display = visible ? "" : "none";
       if(visible) shown++;
 
-      // --- ハイライト（可視/不可視に関わらず毎回元に戻してから適用） ---
+      // --- ハイライト ---
       // タイトル
       const tAnchor = tr.children[1].querySelector("a.kifu-link");
       const tRaw = tAnchor.getAttribute("data-raw") || tAnchor.textContent;
       tAnchor.innerHTML = highlightText(tRaw, qTitle.value.trim()? tTokens: []);
       // 対局者（それぞれの a.plink）
       const pCell = tr.children[2];
-      for(const a of pCell.querySelectorAll("a.plink")){
+      for(const a of pCell.querySelectorAll("a.plink")){{ 
         const pRaw = a.getAttribute("data-raw") || a.textContent;
-        // プレイヤー欄のハイライトは「プレイヤー入力欄のトークン」で
-        // （NFKC/大小無視の簡易ハイライト）
-        a.innerHTML = highlightText(pRaw, qPlayers.value.trim()? (qPlayers.value.normalize('NFKC').split(/\s+/).filter(Boolean)) : []);
-      }
-    });
+        a.innerHTML = highlightText(pRaw, qPlayers.value.trim()? (qPlayers.value.normalize('NFKC').split(/\\s+/).filter(Boolean)) : []);
+      }}
+    }});
     count.textContent = shown;
     if(!skipHashUpdate) updateHash();
-  }
+  }}
 
-  function clearAll(){
+  function clearAll(){{ 
     qTitle.value = ""; qPlayers.value = ""; qDir.value = "";
     apply();
-  }
+  }}
 
-  // 事件
   qTitle.addEventListener("input", ()=>apply());
   qPlayers.addEventListener("input", ()=>apply());
   qDir.addEventListener("change", ()=>apply());
   btnClear.addEventListener("click", clearAll);
 
   // 分類セルクリックで即フィルタ
-  document.addEventListener("click", (e)=>{
+  document.addEventListener("click", (e)=>{{ 
     const a = e.target.closest(".dirlink");
     if(!a) return;
     e.preventDefault();
     const val = a.getAttribute("data-dir") || "";
     qDir.value = val;
     apply();
-  });
+  }});
 
-  // 対局者名クリックでクリーン名を適用（かな⇄カナ/称号除去はJS側でも再度対応）
-  document.addEventListener("click", (e)=>{
+  // 対局者名クリックでクリーン名を適用
+  document.addEventListener("click", (e)=>{{ 
     const a = e.target.closest(".plink");
     if(!a) return;
     e.preventDefault();
     const name = a.getAttribute("data-player") || "";
     qPlayers.value = name;
     apply();
-    try{ qPlayers.focus(); qPlayers.select(); }catch(_){}
-  });
+    try{{ qPlayers.focus(); qPlayers.select(); }}catch(_){{
+      /* noop */
+    }}
+  }});
 
   // 初期化: ハッシュ復元 → 適用
-  (function init(){
-    const {t,p,d} = parseHash();
+  (function init(){{ 
+    const {{t,p,d}} = parseHash();
     if(t) qTitle.value = t;
     if(p) qPlayers.value = p;
     if(d) qDir.value = d;
-    apply({skipHashUpdate:true});
-    // ハッシュ変更（外部から）にも追従
-    window.addEventListener("hashchange", ()=>{
-      const {t,p,d} = parseHash();
+    apply({{skipHashUpdate:true}});
+    window.addEventListener("hashchange", ()=>{{ 
+      const {{t,p,d}} = parseHash();
       qTitle.value = t || "";
       qPlayers.value = p || "";
       qDir.value = d || "";
-      apply({skipHashUpdate:true});
-    });
-  })();
-})();
+      apply({{skipHashUpdate:true}});
+    }});
+  }})();
+}})();
 </script>
 </body>
 </html>

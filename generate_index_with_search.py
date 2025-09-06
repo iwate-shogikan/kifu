@@ -4,11 +4,12 @@ generate_index_with_search.py
 - data/kifu_list.json から検索UI付き index.html を生成
 - フィルタ: タイトル / 対局者名 / 分類(dir)
 - リンク: viewer.html?kifu=<file>&kifudir=<dir>
-- CSSは従前indexのテイストに寄せる
-- 追加: 対局者名をクリックすると、その名前で曖昧検索を即適用
+- 追加: 対局者名クリックで、その名前を「段位・称号・( )/（ ）内など除去」して曖昧検索に適用
+  例: 「五段 小島常明(遠野)」→「小島常明」
 """
 
 import json
+import re
 from pathlib import Path
 from datetime import datetime
 
@@ -20,6 +21,27 @@ def pick(d, *candidates, default=""):
         if k in d and d[k] is not None:
             return d[k]
     return default
+
+def clean_player_name(s: str) -> str:
+    """
+    対局者名から検索ノイズを除去:
+      - 括弧内（() / 全角（ ））を削除
+      - 段位・タイトル語（例: 初段〜九段, 十段, 名人, 竜王, 王位, 王座, 王将, 棋王, 叡王, 棋聖, 女流, アマ）を削除
+      - 余分な空白を正規化
+    """
+    if not s:
+        return ""
+    t = str(s).replace("　", " ").strip()
+    # 括弧内を除去
+    t = re.sub(r"[（(][^）)]*[）)]", "", t)
+    # 段位・称号ワードを除去（単語として出た場合）
+    titles = ["十段","九段","八段","七段","六段","五段","四段","三段","二段","初段",
+              "名人","竜王","王位","王座","王将","棋王","叡王","棋聖","女流","アマ"]
+    for w in titles:
+        t = re.sub(rf"(?:^|\s){re.escape(w)}(?:\s|$)", " ", t)
+    # 連続空白を1つに
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
 
 def load_items(path: Path):
     raw = json.loads(path.read_text(encoding="utf-8"))
@@ -57,8 +79,8 @@ def unique_dirs(items):
 
 def render_players_links(players_text: str) -> str:
     """
-    対局者セル用： 'A vs B' なら A / B をそれぞれクリック可能リンクに。
-    区切り検出に失敗したら全文クリック可能にする。
+    'A vs B' / 'A 対 B' を検出して、それぞれをクリック可能に。
+    data-player には「ノイズ除去した名前」を入れる（表示は元のまま）。
     """
     if not players_text:
         return ""
@@ -69,17 +91,21 @@ def render_players_links(players_text: str) -> str:
     parts = [p.strip() for p in s.split(" vs ") if p.strip()]
     if len(parts) == 2:
         a, b = parts
-        return (f'<a class="plink" href="#" data-player="{a}">{a}</a> '
-                f'vs <a class="plink" href="#" data-player="{b}">{b}</a>')
-    # 和文「対」を試す
+        a_clean = clean_player_name(a)
+        b_clean = clean_player_name(b)
+        return (f'<a class="plink" href="#" data-player="{a_clean}">{a}</a> '
+                f'vs <a class="plink" href="#" data-player="{b_clean}">{b}</a>')
+    # 和文「対」パターン
     if "対" in s:
         p2 = [p.strip() for p in s.split("対") if p.strip()]
         if len(p2) == 2:
             a, b = p2
-            return (f'<a class="plink" href="#" data-player="{a}">{a}</a> '
-                    f'対 <a class="plink" href="#" data-player="{b}">{b}</a>')
-    # 分割不可：全文を1リンク
-    return f'<a class="plink" href="#" data-player="{players_text}">{players_text}</a>'
+            a_clean = clean_player_name(a)
+            b_clean = clean_player_name(b)
+            return (f'<a class="plink" href="#" data-player="{a_clean}">{a}</a> '
+                    f'対 <a class="plink" href="#" data-player="{b_clean}">{b}</a>')
+    # 分割不可: 全文を1リンク（data-player はクリーン名）
+    return f'<a class="plink" href="#" data-player="{clean_player_name(players_text)}">{players_text}</a>'
 
 def build_html(items):
     dir_options = ['<option value="">（すべて）</option>'] + [
@@ -94,7 +120,6 @@ def build_html(items):
         except Exception:
             pass
         players_html = render_players_links(it["players"])
-
         return f"""
         <tr class="row"
             data-title="{it["title"]}"
@@ -156,6 +181,7 @@ def build_html(items):
   a.plink {{ color: #006633; text-decoration: none; }}
   a.plink:hover {{ text-decoration: underline; }}
   .plink {{ cursor: pointer; }}
+
   @media (max-width: 660px) {{
     body {{ font-size: 1rem; }}
     main {{ width: 600px; margin: 0.5rem auto; padding: 1rem; }}
@@ -265,14 +291,14 @@ def build_html(items):
   qDir.addEventListener("change", apply);
   btnClear.addEventListener("click", clearAll);
 
-  // ★ 追加：対局者名クリックで曖昧検索を即適用
+  // 対局者名クリック → クリーン名で曖昧検索
   document.addEventListener("click", (e) => {{
     const a = e.target.closest(".plink");
     if (!a) return;
     e.preventDefault();
     const name = a.getAttribute("data-player") || "";
-    qPlayers.value = name;   // 入力欄に反映
-    apply();                 // 同じロジックでフィルタ
+    qPlayers.value = name;
+    apply();
     try {{ qPlayers.focus(); qPlayers.select(); }} catch(_) {{}}
   }});
 

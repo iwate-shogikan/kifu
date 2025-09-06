@@ -3,18 +3,17 @@
 generate_index_with_search.py
 - data/kifu_list.json から、検索UI付き index.html を生成
 - フィルタ: タイトル / 対局者名 / 分類(dir)
-- リンク形式: viewer.html?kifu=<file>&kifudir=<dir>
-- レイアウトは最初版（テーブル）。CSSのみ落ち着いた配色・小さめフォントへ調整。
+- リンク: viewer.html?kifu=<file>&kifudir=<dir>
+- CSSは従前indexのスタイルに合わせた落ち着いた配色・レイアウト
 """
 
 import json
 from pathlib import Path
 from datetime import datetime
 
-DATA_JSON = Path("data/kifu_list.json")   # ← data配下を参照
+DATA_JSON = Path("data/kifu_list.json")
 OUTPUT_HTML = Path("index.html")
 
-# 柔軟にキーを拾うためのヘルパ
 def pick(d, *candidates, default=""):
     for k in candidates:
         if k in d and d[k] is not None:
@@ -48,16 +47,16 @@ def load_items(path: Path):
     return items
 
 def unique_dirs(items):
-    s = []
     seen = set()
+    out = []
     for it in items:
         d = it["dir"] or ""
         if d not in seen:
-            seen.add(d); s.append(d)
-    return s
+            seen.add(d); out.append(d)
+    return out
 
 def build_html(items):
-    # 分類セレクトの選択肢
+    # 分類セレクト
     dir_options = ['<option value="">（すべて）</option>'] + [
         f'<option value="{d}">{d or "（未分類）"}</option>' for d in unique_dirs(items)
     ]
@@ -67,216 +66,187 @@ def build_html(items):
         href = f'viewer.html?kifu={it["file"]}&kifudir={it["dir"]}'
         date_disp = it["date"]
         try:
-            # YYYY-MM-DD -> YYYY/MM/DD 表示
             date_disp = datetime.strptime(it["date"], "%Y-%m-%d").strftime("%Y/%m/%d")
         except Exception:
             pass
 
-        return f'''
+        return f"""
         <tr class="row"
             data-title="{it["title"]}"
             data-players="{it["players"]}"
             data-dir="{it["dir"]}">
-          <td class="col-date">{date_disp}</td>
-          <td class="col-title"><a href="{href}">{it["title"]}</a></td>
-          <td class="col-players">{it["players"]}</td>
-          <td class="col-dir">{it["dir"] or "（未分類）"}</td>
+          <td>{date_disp or '----/--/--'}</td>
+          <td><a class="kifu-link" href="{href}">{it["title"]}</a></td>
+          <td>{it["players"]}</td>
+          <td>{it["dir"] or "（未分類）"}</td>
         </tr>
-        '''
+        """
 
     rows_html = "\n".join(row(it) for it in items)
 
-    # ===== CSSを落ち着いた配色・小さめフォントに調整 =====
-    return f"""<!doctype html>
+    # ===== CSSは従前indexのstyleに整合（検索UIのみ最小追加） =====
+    return f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>棋譜一覧（検索フィルタ付き）</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>棋譜一覧（検索フィルタ付き）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
 <style>
-  :root {{
-    --bg: #f5f6f7;
-    --card: #ffffff;
-    --text: #222;
-    --muted: #6b7280;
-    --line: #e5e7eb;
-    --link: #1f6feb;
-    --input-border: #d1d5db;
-    --shadow: 0 8px 24px rgba(0,0,0,0.08);
-    --radius: 10px;
-    --fz: 14px;          /* ベース文字サイズ */
-    --fz-small: 12px;    /* 補助文字 */
-  }}
-
-  html, body {{
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", sans-serif;
-    font-size: var(--fz);
-    line-height: 1.6;
+  body {{
+    background-color: #f0f0d8;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: #2a2a2a;
     margin: 0;
     padding: 0;
+    font-size: 16px;
   }}
-
-  .container {{
-    max-width: 1100px;
-    margin: 20px auto 40px;
-    padding: 0 14px;
+  main {{
+    max-width: 900px;
+    width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.05);
+    box-sizing: border-box;
   }}
+  #content-wrapper {{ transform-origin: top center; }}
+  h1, h2 {{ margin: 0 0 0.6rem 0; }}
+  .lead {{ margin: 0 0 1rem 0; color:#555; font-size: 0.95rem; }}
 
-  .panel {{
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 14px;
-  }}
-
-  h1 {{
-    font-size: 18px;
-    margin: 0 0 4px 0;
-  }}
-
-  .sub {{
-    margin: 0 0 10px 0;
-    color: var(--muted);
-    font-size: var(--fz-small);
-  }}
-
+  /* 検索ツールバー（従前の雰囲気を崩さない控えめなUI） */
   .toolbar {{
     display: grid;
     grid-template-columns: 1fr 1fr 220px 120px;
     gap: 8px;
     align-items: end;
-    margin: 10px 0 8px;
+    margin: 0.5rem 0 0.5rem;
   }}
-
   .toolbar label {{
     display: block;
-    font-size: var(--fz-small);
-    color: var(--muted);
+    font-size: 0.9rem;
+    color: #555;
     margin-bottom: 4px;
   }}
-
-  input, select, button {{
+  .toolbar input, .toolbar select, .toolbar button {{
     width: 100%;
-    padding: 8px 10px;
-    border: 1px solid var(--input-border);
-    border-radius: 8px;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     background: #fff;
-    font-size: var(--fz);
+    font-size: 16px;
+    box-sizing: border-box;
   }}
-
-  button {{
-    cursor: pointer;
-  }}
-
-  .count {{
-    font-size: var(--fz-small);
-    color: #444;
-    text-align: right;
-    margin: 6px 2px 10px;
-  }}
+  .toolbar button {{ cursor: pointer; background:#fff; }}
+  .count {{ text-align:right; color:#444; font-size:0.95rem; margin: 0.4rem 0; }}
 
   table {{
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;
+    margin-top: 0.6rem;
   }}
-
-  thead th {{
-    background: #fafafa;
-    color: #111;
-    font-weight: 600;
-    font-size: var(--fz);
+  th, td {{
+    border: 1px solid #ccc;
+    padding: 0.8rem;
     text-align: left;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }}
+  th {{
+    background-color: #e2e2c5;
     position: sticky;
     top: 0;
     z-index: 1;
   }}
+  tr:nth-child(even) {{ background-color: #f9f9f9; }}
 
-  tbody td {{
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--line);
-    vertical-align: top;
-  }}
-
-  tbody tr:hover td {{
-    background: #fcfcfc;
-  }}
-
-  a {{
-    color: var(--link);
+  a.kifu-link {{
+    color: #006633;
     text-decoration: none;
+    font-weight: bold;
   }}
-  a:hover {{ text-decoration: underline; }}
+  a.kifu-link:hover {{ text-decoration: underline; }}
 
-  /* カラム幅の微調整 */
-  .col-date {{ width: 110px; white-space: nowrap; }}
-  .col-players {{ width: 300px; }}
-  .col-dir {{ width: 140px; white-space: nowrap; }}
-
-  @media (max-width: 720px) {{
+  /* レスポンシブ（従前indexのmedia queryを踏襲） */
+  @media (max-width: 660px) {{
+    body {{ font-size: 1rem; }}
+    main {{
+      width: 600px;
+      margin: 0.5rem auto;
+      padding: 1rem;
+    }}
+    #content-wrapper select,
+    #content-wrapper p {{ font-size: 1rem; }}
+    header {{
+      width: 600px;
+      margin: 0 auto;
+      font-size: 1.4rem;
+      padding: 1.2rem 0;
+    }}
+    h1, h2 {{ font-size: 1.2rem; }}
     .toolbar {{ grid-template-columns: 1fr; }}
-    .col-players {{ width: auto; }}
-    .col-dir {{ width: auto; }}
+  }}
+
+  @media (min-width: 661px) and (max-width: 1200px) {{
+    body {{ font-size: 16px; }}
+    main {{
+      width: 660px;
+      margin: 16px auto;
+      padding: 16px;
+    }}
+    #content-wrapper select {{ font-size: 16px; }}
   }}
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="panel">
-      <h1>棋譜一覧</h1>
-      <p class="sub">日付／タイトル／対局者／分類 で一覧。上部の検索UIで絞り込みできます。</p>
+<main>
+  <div id="content-wrapper">
+    <h2>棋譜一覧（最新棋譜から表示）</h2>
+    <p class="lead">柿木棋譜ビューアで再生されます</p>
 
-      <div class="toolbar">
-        <div>
-          <label>タイトルで検索</label>
-          <input id="q-title" type="text" placeholder="例：王座戦・順位戦など">
-        </div>
-        <div>
-          <label>対局者名で検索</label>
-          <input id="q-players" type="text" placeholder="例：佐藤 / 渡辺（部分一致OK）">
-        </div>
-        <div>
-          <label>分類を選択</label>
-          <select id="q-dir">
-            {''.join(dir_options)}
-          </select>
-        </div>
-        <div>
-          <button id="btn-clear">条件クリア</button>
-        </div>
+    <div class="toolbar">
+      <div>
+        <label>タイトルで検索</label>
+        <input id="q-title" type="text" placeholder="例：王座戦・順位戦など">
       </div>
-
-      <div class="count"><span id="count"></span> 件表示</div>
-
-      <table id="tbl">
-        <thead>
-          <tr>
-            <th>日付</th>
-            <th>タイトル</th>
-            <th>対局者</th>
-            <th>分類</th>
-          </tr>
-        </thead>
-        <tbody id="tbody">
-          {rows_html}
-        </tbody>
-      </table>
+      <div>
+        <label>対局者名で検索</label>
+        <input id="q-players" type="text" placeholder="例：佐藤 / 渡辺（部分一致OK）">
+      </div>
+      <div>
+        <label>分類を選択</label>
+        <select id="q-dir">
+          {''.join(dir_options)}
+        </select>
+      </div>
+      <div>
+        <button id="btn-clear">条件クリア</button>
+      </div>
     </div>
+
+    <div class="count"><span id="count"></span> 件表示</div>
+
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>棋戦名</th>
+          <th>対局者</th>
+          <th>分類</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        {rows_html}
+      </tbody>
+    </table>
   </div>
+</main>
 
 <script>
 (function() {{
   const $ = (s)=>document.querySelector(s);
   const $$ = (s)=>Array.from(document.querySelectorAll(s));
-
   const qTitle = $("#q-title");
   const qPlayers = $("#q-players");
   const qDir = $("#q-dir");
@@ -292,8 +262,8 @@ def build_html(items):
     const t = norm(qTitle.value);
     const p = norm(qPlayers.value);
     const d = qDir.value;
-
     let shown = 0;
+
     rows.forEach(tr => {{
       const title = norm(tr.dataset.title);
       const players = norm(tr.dataset.players);
@@ -307,24 +277,23 @@ def build_html(items):
       tr.style.display = visible ? "" : "none";
       if (visible) shown++;
     }});
+
     count.textContent = shown;
   }}
 
-  function clearAll(){{
+  function clearAll() {{
     qTitle.value = "";
     qPlayers.value = "";
     qDir.value = "";
     apply();
   }}
 
-  // 入力イベント
   qTitle.addEventListener("input", apply);
   qPlayers.addEventListener("input", apply);
   qDir.addEventListener("change", apply);
   btnClear.addEventListener("click", clearAll);
 
-  // 初期表示
-  apply();
+  apply(); // 初期表示
 }})();
 </script>
 </body>
@@ -336,7 +305,7 @@ def main():
         raise SystemExit(f"ERROR: {DATA_JSON} が見つかりません。")
     items = load_items(DATA_JSON)
 
-    # 日付降順に並べ替え（可能なものだけ優先）
+    # 日付降順に
     def date_key(it):
         try:
             return datetime.strptime(it["date"], "%Y-%m-%d")

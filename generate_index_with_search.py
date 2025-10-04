@@ -224,7 +224,7 @@ def build_html(items):
 <body>
 <main>
   <div id="content-wrapper">
-    <h2>棋譜一覧（最新棋譜から表示）</h2>
+    <h2>岩手日報掲載棋譜・岩手県関連棋譜</h2>
     <p class="lead">柿木棋譜ビューアで再生されます</p>
 
     <div class="toolbar">

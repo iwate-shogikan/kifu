@@ -472,14 +472,22 @@ def build_html(items):
     try{ qPlayers.focus(); qPlayers.select(); }catch(_){}
   });
 
-  // ★ 棋譜リンククリック時：現在の検索条件ハッシュを ret= に載せて viewer.html へ渡す
-  document.addEventListener("click", (e)=>{
-    const a = e.target.closest("a.kifu-link");
-    if(!a) return;
-    e.preventDefault();
-    const ret = location.hash ? "&ret=" + encodeURIComponent(location.hash) : "";
-    location.href = a.href + ret; // 例: viewer.html?...&ret=%23t=...&p=...&d=...
-  });
+// ★ 棋譜リンククリック時：#t,#p,#d のいずれかが入っている時だけ ret= を付ける
+document.addEventListener("click", (e)=>{
+  const a = e.target.closest("a.kifu-link");
+  if(!a) return;
+  e.preventDefault();
+
+  const h = location.hash || "";
+  const params = new URLSearchParams(h.replace(/^#/,""));
+  const t = params.get("t") || "";
+  const p = params.get("p") || "";
+  const d = params.get("d") || "";
+  const hasAny = (t !== "" || p !== "" || d !== "");
+
+  const ret = hasAny ? "&ret=" + encodeURIComponent(`#t=${t}&p=${p}&d=${d}`) : "";
+  location.href = a.href + ret;
+});
 
   // ヘッダクリックでソート
   document.querySelectorAll("th.sortable").forEach(th=>{
@@ -542,3 +550,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+     

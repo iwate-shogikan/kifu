@@ -105,26 +105,37 @@
     const backIndex = document.getElementById("back-index");
     const backDir   = document.getElementById("back-dir");
 
-    // 「一覧に戻る」は常にフィルタなしトップ
     backIndex.href = "index.html";
 
-    // 「分類に戻る」：まずは index 側から受け取った ret（= #t,#p,#d）を優先して復元
-    if (retParam) {
-      backDir.href = "index.html" + decodeURIComponent(retParam);
+    // ret が有効（t/p/d のいずれか非空）なら採用。空なら無視。
+    function parseRet(retRaw){
+      if(!retRaw) return null;
+      const h = decodeURIComponent(retRaw).replace(/^#/,"");
+      const sp = new URLSearchParams(h);
+      const t = sp.get("t") || "";
+      const p = sp.get("p") || "";
+      const d = sp.get("d") || "";
+      const hasAny = (t !== "" || p !== "" || d !== "");
+      return hasAny ? `#t=${t}&p=${p}&d=${d}` : null;
+    }
+
+    const url = new URL(location.href);
+    const dir = url.searchParams.get("kifudir") || "";
+    const ret = parseRet(url.searchParams.get("ret") || "");
+
+    if (ret) {
+      backDir.href = "index.html" + ret;
+      backDir.textContent = `← ${dir || "前の条件"} に戻る`;
       backDir.style.display = "inline";
-      if (kifuDir) backDir.textContent = `← ${kifuDir} に戻る`;
-      else backDir.textContent = "← 前の条件に戻る";
       return;
     }
 
-    // ret が無い場合は、kifudir があれば分類のみ復元（#d=...）
-    if (kifuDir) {
-      const hash = "#d=" + encodeURIComponent(kifuDir);
-      backDir.href = "index.html" + hash;
-      backDir.textContent = `← ${kifuDir} に戻る`;
+    // ret が無い or 空 → 分類のみ復元
+    if (dir) {
+      backDir.href = "index.html#d=" + encodeURIComponent(dir);
+      backDir.textContent = `← ${dir} に戻る`;
       backDir.style.display = "inline";
     } else {
-      // どちらも無ければ非表示
       backDir.style.display = "none";
     }
   })();

@@ -5,7 +5,11 @@ from pathlib import Path
 from datetime import datetime
 
 # ディレクトリ設定
-base_dir = Path.cwd()
+# 旧:
+# base_dir = Path.cwd()
+
+# 新: スクリプトファイルのあるディレクトリを基準にする
+base_dir = Path(__file__).resolve().parent
 data_dir = base_dir / "data"
 output_json = data_dir / "kifu_list.json"
 
@@ -122,4 +126,7 @@ for subdir in sorted(data_dir.iterdir()):
 with open(output_json, "w", encoding="utf-8") as f:
     json.dump(kifu_entries, f, ensure_ascii=False, indent=2)
 
+print(f"[INFO] base_dir={base_dir}")
+print(f"[INFO] data_dir={data_dir}")
+print(f"[INFO] found {len(kifu_entries)} .kif files across {len([p for p in data_dir.iterdir() if p.is_dir()])} folders")
 print(f"✅ {output_json} に {len(kifu_entries)} 件出力しました。")

@@ -58,17 +58,20 @@
 <main>
   <p id="kifuDescription">棋譜情報を読み込み中...</p>
   <div id="KJ_DIV"></div>
-  <p>
-    <a href="index.html">← 一覧に戻る</a>　/　<a id="backToDir" style="display:none;" href="#">← 分類に戻る</a>
+
+  <p id="backlinks">
+    <a id="back-index" href="index.html">← 一覧に戻る</a>　/　
+    <a id="back-dir" href="#" style="display:none;">← 分類に戻る</a>
   </p>
 </main>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
   const kifuParam = urlParams.get("kifu") || "";           // 例: 20250510中塚西澤.kif
-  const kifuDir = urlParams.get("kifudir") || "kifuA";     // 例: kifuA
+  const kifuDir   = urlParams.get("kifudir") || "";        // 例: 岩手県北支部 など
+  const retParam  = urlParams.get("ret") || "";            // 例: "%23t=...&p=...&d=..."
 
-  // 棋譜ファイルのパスを明示的に指定
+  // 棋譜ファイルのパス
   const KIF_FILE_NAME = `data/${kifuDir}/${kifuParam}`;
 
   // kj_free.js のある場所（画像も含む）
@@ -83,31 +86,52 @@
       );
       const desc = document.getElementById("kifuDescription");
       if (match) {
-        desc.innerHTML = `<strong>${match.title}</strong>（${match.date}）<br>${match.players}`;
+        const dateDisp = match.date || "----/--/--";
+        desc.innerHTML = `<strong>${match.title}</strong>（${dateDisp}）<br>${match.players || ""}`;
       } else {
         desc.textContent = "棋譜情報が見つかりませんでした。";
       }
     })
-    .catch(err => {
+    .catch(() => {
       document.getElementById("kifuDescription").textContent = "棋譜情報の読み込みに失敗しました。";
     });
 
-  // ビューア用変数
+  // ビューア用変数（必要に応じて）
   var UPDATE_TIME = 1;
   var START_TESUU = 0;
 
-  // 「分類に戻る」リンク設定
-  const backToDirLink = document.getElementById("backToDir");
-  if (kifuDir) {
-    backToDirLink.href = `data/${encodeURIComponent(kifuDir)}.html`;
-    backToDirLink.textContent = `← ${kifuDir} に戻る`;
-    backToDirLink.style.display = "inline";
-  }
+  // ==== 戻りリンク設定 ====
+  (function(){
+    const backIndex = document.getElementById("back-index");
+    const backDir   = document.getElementById("back-dir");
+
+    // 「一覧に戻る」は常にフィルタなしトップ
+    backIndex.href = "index.html";
+
+    // 「分類に戻る」：まずは index 側から受け取った ret（= #t,#p,#d）を優先して復元
+    if (retParam) {
+      backDir.href = "index.html" + decodeURIComponent(retParam);
+      backDir.style.display = "inline";
+      if (kifuDir) backDir.textContent = `← ${kifuDir} に戻る`;
+      else backDir.textContent = "← 前の条件に戻る";
+      return;
+    }
+
+    // ret が無い場合は、kifudir があれば分類のみ復元（#d=...）
+    if (kifuDir) {
+      const hash = "#d=" + encodeURIComponent(kifuDir);
+      backDir.href = "index.html" + hash;
+      backDir.textContent = `← ${kifuDir} に戻る`;
+      backDir.style.display = "inline";
+    } else {
+      // どちらも無ければ非表示
+      backDir.style.display = "none";
+    }
+  })();
 </script>
 
 <!-- ビューアスクリプトは固定位置 -->
 <script src="kifu/kj_free107/kj_free/kj_free.js"></script>
-
 
 </body>
 </html>

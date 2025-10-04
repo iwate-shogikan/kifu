@@ -14,6 +14,7 @@ generate_index_with_search.py
   * 件数ゼロ時に「該当する項目がありません」行を表示
 - 追加：
   * 「条件クリア」押下でソートも既定（日時降順）にリセット
+  * 棋譜リンククリック時に現在の検索ハッシュ(#t,#p,#d)を viewer.html に ret= として引き渡す
 """
 
 import json
@@ -469,6 +470,15 @@ def build_html(items):
     qPlayers.value = name;
     apply();
     try{ qPlayers.focus(); qPlayers.select(); }catch(_){}
+  });
+
+  // ★ 棋譜リンククリック時：現在の検索条件ハッシュを ret= に載せて viewer.html へ渡す
+  document.addEventListener("click", (e)=>{
+    const a = e.target.closest("a.kifu-link");
+    if(!a) return;
+    e.preventDefault();
+    const ret = location.hash ? "&ret=" + encodeURIComponent(location.hash) : "";
+    location.href = a.href + ret; // 例: viewer.html?...&ret=%23t=...&p=...&d=...
   });
 
   // ヘッダクリックでソート

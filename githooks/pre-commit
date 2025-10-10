@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+export LC_ALL=C.UTF-8 || true
+
+echo "[pre-commit] stage: add/modify/delete (pass1: add -A)"
+# まず一撃で追加・変更・削除を全部ステージ
+git add -A
+
+echo "[pre-commit] stage: ensure untracked (pass2: ls-files -o -> add)"
+# 念のため未追跡をゼロ終端で安全ステージ（取りこぼし保険）
+git ls-files -o --exclude-standard -z | xargs -0 -r git add --all --
+
+echo "[pre-commit] regenerate kifu_list.json and index.html ..."
+python generate_kifu_list.py
+python generate_index_with_search.py
+
+# 生成物を確実にステージ
+git add -- data/kifu_list.json index.html
+
+echo "[pre-commit] done."

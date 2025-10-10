@@ -1897,53 +1897,11 @@
     "dir": "kif2"
   },
   {
-    "file": "20220403早繰2二銀.kif",
-    "title": "20220403早繰2二銀",
-    "players": "早繰り銀 vs 2二銀型①",
-    "date": "2022-04-03",
-    "dir": "senpou"
-  },
-  {
-    "file": "bougin.kif",
-    "title": "bougin",
-    "players": "先手 vs 後手",
-    "date": "",
-    "dir": "senpou"
-  },
-  {
-    "file": "furibi.kif",
-    "title": "furibi",
-    "players": "先手振り飛車基本 vs 後手",
-    "date": "",
-    "dir": "senpou"
-  },
-  {
-    "file": "ibi.kif",
-    "title": "ibi",
-    "players": "居飛車基本 vs 後手",
-    "date": "",
-    "dir": "senpou"
-  },
-  {
-    "file": "senteisida.kif",
-    "title": "senteisida",
-    "players": "先手石田流 vs 後手",
-    "date": "",
-    "dir": "senpou"
-  },
-  {
-    "file": "sentemigi.kif",
-    "title": "sentemigi",
-    "players": "先手右四間飛車戦法 vs 後手",
-    "date": "",
-    "dir": "senpou"
-  },
-  {
-    "file": "senteyagura.kif",
-    "title": "senteyagura",
-    "players": "先手矢倉戦の指し方 vs 後手",
-    "date": "",
-    "dir": "senpou"
+    "file": "20251004昆山口.kif",
+    "title": "第68期　岩手王座戦　1回戦",
+    "players": "三段　昆　隆志(盛岡) vs 四段　山口真弥(釜石)",
+    "date": "2025-10-04",
+    "dir": "kif2"
   },
   {
     "file": "20230523室岡小山.kif",

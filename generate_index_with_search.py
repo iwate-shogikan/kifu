@@ -15,6 +15,7 @@ generate_index_with_search.py
 - 追加：
   * 「条件クリア」押下でソートも既定（日時降順）にリセット
   * 棋譜リンククリック時に現在の検索ハッシュ(#t,#p,#d)を viewer.html に ret= として引き渡す
+  * ★ 分類セレクトの表示順を data/dir_order.txt で任意制御（未指定は従来順）
 """
 
 import json
@@ -24,6 +25,7 @@ from datetime import datetime
 
 DATA_JSON = Path("data/kifu_list.json")
 OUTPUT_HTML = Path("index.html")
+DIR_ORDER_TXT = Path("data/dir_order.txt")   # ← 新規
 
 def pick(d, *candidates, default=""):
     for k in candidates:
@@ -78,7 +80,8 @@ def load_items(path: Path):
         })
     return items
 
-def unique_dirs(items):
+def collect_dirs_in_appearance_order(items):
+    """出現順で一意な分類を収集（従来の挙動）"""
     seen = set(); out = []
     for it in items:
         d = it["dir"] or ""
@@ -86,43 +89,53 @@ def unique_dirs(items):
             seen.add(d); out.append(d)
     return out
 
-def date_to_sortkey(s: str) -> str:
-    """'YYYY-MM-DD' → 'YYYYMMDD' / 不明は '00000000'"""
-    if not s:
-        return "00000000"
-    try:
-        dt = datetime.strptime(s, "%Y-%m-%d")
-        return dt.strftime("%Y%m%d")
-    except Exception:
-        return "00000000"
+# === 追加: 並び順リストの読み込み ===
+def load_dir_order_list(path: Path):
+    """
+    data/dir_order.txt を読み込み、上から順にリスト化。
+    - 空行/先頭#行は無視
+    - '（未分類）' は空文字 '' として扱う
+    - ファイルが無い場合は None を返す（従来順にフォールバック）
+    """
+    if not path.exists():
+        return None
+    order = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        s = line.strip()
+        if not s or s.startswith("#"):
+            continue
+        if s == "（未分類）":
+            s = ""
+        order.append(s)
+    return order
 
-def render_players_links(players_text: str) -> str:
-    """'A vs B' / 'A 対 B' をそれぞれクリック可能リンクに（data-player はクリーン名）"""
-    if not players_text:
-        return ""
-    s = players_text.replace("　", " ").strip()
-    for token in ["ＶＳ", "ｖｓ", "VS", "Vs", "vS", "－", "—", "ー"]:
-        s = s.replace(token, " vs ")
-    parts = [p.strip() for p in s.split(" vs ") if p.strip()]
-    if len(parts) == 2:
-        a, b = parts
-        a_clean = clean_player_name(a); b_clean = clean_player_name(b)
-        return (f'<a class="plink" href="#" data-raw="{a}" data-player="{a_clean}">{a}</a> '
-                f'vs <a class="plink" href="#" data-raw="{b}" data-player="{b_clean}">{b}</a>')
-    if "対" in s:
-        p2 = [p.strip() for p in s.split("対") if p.strip()]
-        if len(p2) == 2:
-            a, b = p2
-            a_clean = clean_player_name(a); b_clean = clean_player_name(b)
-            return (f'<a class="plink" href="#" data-raw="{a}" data-player="{a_clean}">{a}</a> '
-                    f'対 <a class="plink" href="#" data-raw="{b}" data-player="{b_clean}">{b}</a>')
-    return (f'<a class="plink" href="#" data-raw="{players_text}" '
-            f'data-player="{clean_player_name(players_text)}">{players_text}</a>')
+def apply_custom_order(all_dirs, preferred_order):
+    """preferred_order に従って並び替え。指定外は元の順で後ろに付ける。"""
+    if not preferred_order:
+        return all_dirs
+    out, seen = [], set()
+    # 1) 優先リストにあるもの（実在するものだけ）
+    for d in preferred_order:
+        if d in all_dirs and d not in seen:
+            out.append(d); seen.add(d)
+    # 2) 残りを元の順で
+    for d in all_dirs:
+        if d not in seen:
+            out.append(d); seen.add(d)
+    return out
+
+def dir_label(d: str) -> str:
+    return d if d else "（未分類）"
 
 def build_html(items):
+    # 分類の取得（従来：出現順）→ dir_order.txt があれば任意順に並べ替え
+    dirs_appearance = collect_dirs_in_appearance_order(items)
+    preferred = load_dir_order_list(DIR_ORDER_TXT)
+    ordered_dirs = apply_custom_order(dirs_appearance, preferred)
+
     # 分類セレクト
     dir_options_html = '<option value="">（すべて）</option>' + ''.join(
-        f'<option value="{d}">{d or "（未分類）"}</option>' for d in unique_dirs(items)
+        f'<option value="{d}">{dir_label(d)}</option>' for d in ordered_dirs
     )
 
     # 行HTML
@@ -134,8 +147,9 @@ def build_html(items):
             date_disp = datetime.strptime(it["date"], "%Y-%m-%d").strftime("%Y/%m/%d")
         except Exception:
             pass
+        # 対局者リンク
         players_html = render_players_links(it["players"])
-        dir_txt = it["dir"] or "（未分類）"
+        dir_txt = dir_label(it["dir"] or "")
         dir_link = f'<a href="#" class="dirlink" data-dir="{it["dir"] or ""}">{dir_txt}</a>'
         sortkey = date_to_sortkey(it["date"])
         rows.append(
@@ -531,6 +545,39 @@ document.addEventListener("click", (e)=>{
             .replace("__ROWS__", rows_html))
     return html
 
+def date_to_sortkey(s: str) -> str:
+    """'YYYY-MM-DD' → 'YYYYMMDD' / 不明は '00000000'"""
+    if not s:
+        return "00000000"
+    try:
+        dt = datetime.strptime(s, "%Y-%m-%d")
+        return dt.strftime("%Y%m%d")
+    except Exception:
+        return "00000000"
+
+def render_players_links(players_text: str) -> str:
+    """'A vs B' / 'A 対 B' をそれぞれクリック可能リンクに（data-player はクリーン名）"""
+    if not players_text:
+        return ""
+    s = players_text.replace("　", " ").strip()
+    for token in ["ＶＳ", "ｖｓ", "VS", "Vs", "vS", "－", "—", "ー"]:
+        s = s.replace(token, " vs ")
+    parts = [p.strip() for p in s.split(" vs ") if p.strip()]
+    if len(parts) == 2:
+        a, b = parts
+        a_clean = clean_player_name(a); b_clean = clean_player_name(b)
+        return (f'<a class="plink" href="#" data-raw="{a}" data-player="{a_clean}">{a}</a> '
+                f'vs <a class="plink" href="#" data-raw="{b}" data-player="{b_clean}">{b}</a>')
+    if "対" in s:
+        p2 = [p.strip() for p in s.split("対") if p.strip()]
+        if len(p2) == 2:
+            a, b = p2
+            a_clean = clean_player_name(a); b_clean = clean_player_name(b)
+            return (f'<a class="plink" href="#" data-raw="{a}" data-player="{a_clean}">{a}</a> '
+                    f'対 <a class="plink" href="#" data-raw="{b}" data-player="{b_clean}">{b}</a>')
+    return (f'<a class="plink" href="#" data-raw="{players_text}" '
+            f'data-player="{clean_player_name(players_text)}">{players_text}</a>')
+
 def main():
     if not DATA_JSON.exists():
         raise SystemExit(f"ERROR: {DATA_JSON} が見つかりません。")
@@ -550,4 +597,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-     

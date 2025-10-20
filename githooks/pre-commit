@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# pre-commit: kifu プロジェクト用
-# - 追跡済みの変更/削除/移動は自動ステージ（git add -u）
-# - data/**/*.kif の新規ファイルだけ自動ステージ（NUL区切りで日本語名対応）
-# - 生成物（data/kifu_list.json, index.html）は常に再生成して差分があればステージ
+# pre-commit: kifu プロジェクト用（Windowsでも安定する実装）
+# - 追跡済みの変更/削除/移動: 自動ステージ (git add -u)
+# - data/ 配下の新規/変更/削除/移動: すべて自動ステージ (git add -A -- data)
+# - 生成物 (data/kifu_list.json, index.html): 再生成して差分があればステージ
 # - 何もステージされていなければコミットを中止（空コミット防止）
 
 set -euo pipefail
 
 echo "[pre-commit] start"
 
-# リポジトリルートへ移動（念のため）
+# リポジトリルートへ（念のため）
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
-# Pythonコマンドを決定
+# Python コマンドを決定
 if command -v python >/dev/null 2>&1; then
   PY=python
 elif command -v python3 >/dev/null 2>&1; then
@@ -27,16 +27,16 @@ echo "[pre-commit] regenerate artifacts..."
 $PY generate_kifu_list.py
 $PY generate_index_with_search.py
 
-# 追跡済みの変更/削除/移動をステージ（新規は含めない）
-echo "[pre-commit] stage tracked changes (add -u)"
+# 追跡済みの変更/削除/移動（新規は含めない）
+echo "[pre-commit] stage tracked changes (-u)"
 git add -u
 
-# data/ 配下の新規 .kif を NUL 区切りで安全に追加（日本語名対応）
-echo "[pre-commit] stage new .kif under data/"
-git ls-files -z -o --exclude-standard -- 'data/**/*.kif' \
-  | xargs -0 -r -I{} git add "{}"
+# ★ data/ 配下の新規/変更/削除/移動をすべて拾う
+#   → .kif だけでなく data 内の変更を網羅（新規分類フォルダ作成もOK）
+echo "[pre-commit] stage all under data/ (-A -- data)"
+git add -A -- data
 
-# 生成物は差分がある時のみステージ
+# 生成物が変わっていればステージ（念のため再確認）
 if ! git diff --quiet -- data/kifu_list.json 2>/dev/null; then
   git add data/kifu_list.json || true
 fi
@@ -51,4 +51,3 @@ if git diff --cached --quiet; then
 fi
 
 echo "[pre-commit] done."
-

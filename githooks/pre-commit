@@ -1,23 +1,21 @@
 #!/usr/bin/env bash
-# pre-commit: kifu プロジェクト用（Windowsでも安定する実装）
-# - 追跡済みの変更/削除/移動: 自動ステージ (git add -u)
-# - data/ 配下の新規/変更/削除/移動: すべて自動ステージ (git add -A -- data)
-# - 生成物 (data/kifu_list.json, index.html): 再生成して差分があればステージ
-# - 何もステージされていなければコミットを中止（空コミット防止）
+# pre-commit: kifu プロジェクト用（Windows 安定・ルート全体対象）
+# - 生成物再生成（kifu_list.json / index.html）
+# - 追跡済みの変更/削除/移動: git add -u
+# - ★ リポジトリ ルート（:/）配下の新規/変更/削除/移動を全てステージ: git add -A -- ":/"
+#   → data/ の上位階層や新規フォルダも確実に拾う
+# - 何もステージされていなければ空コミットを中止
 
 set -euo pipefail
-
 echo "[pre-commit] start"
 
-# リポジトリルートへ（念のため）
+# ルートへ
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
-# Python コマンドを決定
-if command -v python >/dev/null 2>&1; then
-  PY=python
-elif command -v python3 >/dev/null 2>&1; then
-  PY=python3
+# Python 決定
+if command -v python >/dev/null 2>&1; then PY=python
+elif command -v python3 >/dev/null 2>&1; then PY=python3
 else
   echo "[pre-commit] ERROR: python が見つかりません" >&2
   exit 2
@@ -27,24 +25,16 @@ echo "[pre-commit] regenerate artifacts..."
 $PY generate_kifu_list.py
 $PY generate_index_with_search.py
 
-# 追跡済みの変更/削除/移動（新規は含めない）
+# 追跡済み変更/削除/移動
 echo "[pre-commit] stage tracked changes (-u)"
 git add -u
 
-# ★ data/ 配下の新規/変更/削除/移動をすべて拾う
-#   → .kif だけでなく data 内の変更を網羅（新規分類フォルダ作成もOK）
-echo "[pre-commit] stage all under data/ (-A -- data)"
-git add -A -- data
+# ルート配下すべて（:/ 固定）をステージ
+# .git は自動除外、.gitignore は尊重されます
+echo "[pre-commit] stage ALL under repo root (:/)"
+git add -A -- ":/"
 
-# 生成物が変わっていればステージ（念のため再確認）
-if ! git diff --quiet -- data/kifu_list.json 2>/dev/null; then
-  git add data/kifu_list.json || true
-fi
-if ! git diff --quiet -- index.html 2>/dev/null; then
-  git add index.html || true
-fi
-
-# 何もステージされていなければコミットを中止（空コミット防止）
+# 空コミット防止
 if git diff --cached --quiet; then
   echo "[pre-commit] No staged changes. Abort commit." >&2
   exit 1

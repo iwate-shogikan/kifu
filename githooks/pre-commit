@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# pre-commit: kifu プロジェクト用（Windows 安定・ルート全体対象）
+# pre-commit: kifu プロジェクト用（Windows安定版・未追跡の確実拾い上げ）
 # - 生成物再生成（kifu_list.json / index.html）
 # - 追跡済みの変更/削除/移動: git add -u
-# - ★ リポジトリ ルート（:/）配下の新規/変更/削除/移動を全てステージ: git add -A -- ":/"
-#   → data/ の上位階層や新規フォルダも確実に拾う
-# - 何もステージされていなければ空コミットを中止
+# - ★ 未追跡ファイル: `git status --porcelain=v2 -z` をNUL区切りでパースして add
+#   → data/配下に限らずリポジトリ内の新規ファイルを確実に拾う（.gitignore は尊重）
+# - 何もステージされていなければ空コミット中止
 
 set -euo pipefail
 echo "[pre-commit] start"
@@ -25,14 +25,38 @@ echo "[pre-commit] regenerate artifacts..."
 $PY generate_kifu_list.py
 $PY generate_index_with_search.py
 
-# 追跡済み変更/削除/移動
+# 追跡済みの変更/削除/移動
 echo "[pre-commit] stage tracked changes (-u)"
 git add -u
 
-# ルート配下すべて（:/ 固定）をステージ
-# .git は自動除外、.gitignore は尊重されます
-echo "[pre-commit] stage ALL under repo root (:/)"
-git add -A -- ":/"
+# ★ 未追跡ファイルを NUL 区切りで安全に追加（.gitignore で無視されてるものは出てこない）
+#    porcelain=v2 -z のレコード形式: 先頭が "? " のエントリが未追跡
+echo "[pre-commit] stage untracked (porcelain=v2 -z)"
+git -c core.quotepath=false status --porcelain=v2 -z \
+| while IFS= read -r -d '' rec; do
+    case "$rec" in
+      \?\ *)  # "? " で始まる＝未追跡
+        path="${rec:2}"   # 先頭"? "を除去
+        # 念のため .git/ を除外
+        case "$path" in
+          .git/*) continue ;;
+        esac
+        # 必要なら拡張子で絞る（例：*.kif のみ）
+        # [[ "$path" != *.kif ]] && continue
+        git add -- "$path" || true
+        echo "  + added: $path"
+        ;;
+      *) : ;;
+    esac
+  done
+
+# 生成物の差分があればステージ（保険）
+if ! git diff --quiet -- data/kifu_list.json 2>/dev/null; then
+  git add -- data/kifu_list.json || true
+fi
+if ! git diff --quiet -- index.html 2>/dev/null; then
+  git add -- index.html || true
+fi
 
 # 空コミット防止
 if git diff --cached --quiet; then

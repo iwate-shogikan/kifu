@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
-# pre-commit: kifu プロジェクト用（Windows安定版・未追跡の確実拾い上げ）
+# pre-commit: kifu プロジェクト用（Windows安定版・未追跡を plumbing で確実に追加）
 # - 生成物再生成（kifu_list.json / index.html）
 # - 追跡済みの変更/削除/移動: git add -u
-# - ★ 未追跡ファイル: `git status --porcelain=v2 -z` をNUL区切りでパースして add
-#   → data/配下に限らずリポジトリ内の新規ファイルを確実に拾う（.gitignore は尊重）
-# - 何もステージされていなければ空コミット中止
+# - ★ 未追跡: git ls-files -o -z を git update-index --add -z --stdin へ直結（NUL区切り）
+# - 何もステージされていなければ空コミット中止（デバッグ出力付き）
 
 set -euo pipefail
 echo "[pre-commit] start"
 
-# ルートへ
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
@@ -22,41 +20,30 @@ else
 fi
 
 echo "[pre-commit] regenerate artifacts..."
-$PY generate_kifu_list.py
-$PY generate_index_with_search.py
+"$PY" generate_kifu_list.py
+"$PY" generate_index_with_search.py
 
 # 追跡済みの変更/削除/移動
 echo "[pre-commit] stage tracked changes (-u)"
 git add -u
 
-# ★ 未追跡ファイルを NUL 区切りで安全に追加（.gitignore で無視されてるものは出てこない）
-#    porcelain=v2 -z のレコード形式: 先頭が "? " のエントリが未追跡
-echo "[pre-commit] stage untracked (porcelain=v2 -z)"
-git -c core.quotepath=false status --porcelain=v2 -z \
-| while IFS= read -r -d '' rec; do
-    case "$rec" in
-      \?\ *)  # "? " で始まる＝未追跡
-        path="${rec:2}"   # 先頭"? "を除去
-        # 念のため .git/ を除外
-        case "$path" in
-          .git/*) continue ;;
-        esac
-        # 必要なら拡張子で絞る（例：*.kif のみ）
-        # [[ "$path" != *.kif ]] && continue
-        git add -- "$path" || true
-        echo "  + added: $path"
-        ;;
-      *) : ;;
-    esac
-  done
+# ★ 未追跡を NUL 区切りで “確実に” 追加（.gitignore は尊重）
+#   PowerShell/エンコード差異でも安全に働く
+echo "[pre-commit] stage untracked via update-index (nul-delimited)"
+git ls-files -o --exclude-standard -z \
+  | git update-index --add -z --stdin || true
 
-# 生成物の差分があればステージ（保険）
+# 生成物の差分があれば保険でステージ
 if ! git diff --quiet -- data/kifu_list.json 2>/dev/null; then
   git add -- data/kifu_list.json || true
 fi
 if ! git diff --quiet -- index.html 2>/dev/null; then
   git add -- index.html || true
 fi
+
+# デバッグ：いまステージされている一覧を表示
+echo "[pre-commit] staged now:"
+git diff --cached --name-status || true
 
 # 空コミット防止
 if git diff --cached --quiet; then

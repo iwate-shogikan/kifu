@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# pre-commit: kifu プロジェクト用（Windows安定版・未追跡を plumbing で確実に追加）
+# pre-commit: kifu プロジェクト用（Windows安定版・未追跡を NUL 区切りで確実に追加）
 # - 生成物再生成（kifu_list.json / index.html）
 # - 追跡済みの変更/削除/移動: git add -u
-# - ★ 未追跡: git ls-files -o -z を git update-index --add -z --stdin へ直結（NUL区切り）
+# - ★ 未追跡: git ls-files -o -z を git add --pathspec-from-file=- --pathspec-file-nul へ直結
 # - 何もステージされていなければ空コミット中止（デバッグ出力付き）
 
 set -euo pipefail
@@ -11,9 +11,11 @@ echo "[pre-commit] start"
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
-# Python 決定
-if command -v python >/dev/null 2>&1; then PY=python
-elif command -v python3 >/dev/null 2>&1; then PY=python3
+# Python 実行ファイルを決定
+if command -v python >/dev/null 2>&1; then
+  PY=python
+elif command -v python3 >/dev/null 2>&1; then
+  PY=python3
 else
   echo "[pre-commit] ERROR: python が見つかりません" >&2
   exit 2
@@ -23,15 +25,15 @@ echo "[pre-commit] regenerate artifacts..."
 "$PY" generate_kifu_list.py
 "$PY" generate_index_with_search.py
 
-# 追跡済みの変更/削除/移動
+# 追跡済みの変更/削除/移動をステージ
 echo "[pre-commit] stage tracked changes (-u)"
 git add -u
 
-# ★ 未追跡を NUL 区切りで “確実に” 追加（.gitignore は尊重）
-#   PowerShell/エンコード差異でも安全に働く
-echo "[pre-commit] stage untracked via update-index (nul-delimited)"
+# ★ 未追跡ファイルを NUL 区切りで “確実に” 追加（.gitignore は尊重）
+#   update-index より安全で、日本語名も確実に扱える
+echo "[pre-commit] stage untracked via git add (nul-delimited)"
 git ls-files -o --exclude-standard -z \
-  | git update-index --add -z --stdin || true
+  | git add --pathspec-from-file=- --pathspec-file-nul
 
 # 生成物の差分があれば保険でステージ
 if ! git diff --quiet -- data/kifu_list.json 2>/dev/null; then

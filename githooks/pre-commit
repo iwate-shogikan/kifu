@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# pre-commit: kifu プロジェクト用（Windows安定版・未追跡を NUL 区切りで確実に追加）
-# - 生成物再生成（kifu_list.json / index.html）
+# pre-commit: kifu プロジェクト用（Windows安定版・NUL区切り対応）
+# ポイント：未追跡の取り込みを「生成」より前に実施（①追跡化 → ②生成）
 # - 追跡済みの変更/削除/移動: git add -u
-# - ★ 未追跡: git ls-files -o -z を git add --pathspec-from-file=- --pathspec-file-nul へ直結
-# - 何もステージされていなければ空コミット中止（デバッグ出力付き）
+# - 未追跡: git ls-files -o -z | git add --pathspec-from-file=- --pathspec-file-nul
+# - 生成物再生成（kifu_list.json / index.html）
+# - 生成物が差分なら保険で add
+# - 何もステージされていなければ空コミット中止
 
 set -euo pipefail
 echo "[pre-commit] start"
@@ -21,19 +23,29 @@ else
   exit 2
 fi
 
-echo "[pre-commit] regenerate artifacts..."
-"$PY" generate_kifu_list.py
-"$PY" generate_index_with_search.py
-
-# 追跡済みの変更/削除/移動をステージ
+###############################################################################
+# ① 追跡化（先にやる）：tracked と untracked をステージ
+###############################################################################
 echo "[pre-commit] stage tracked changes (-u)"
 git add -u
 
-# ★ 未追跡ファイルを NUL 区切りで “確実に” 追加（.gitignore は尊重）
-#   update-index より安全で、日本語名も確実に扱える
 echo "[pre-commit] stage untracked via git add (nul-delimited)"
-git ls-files -o --exclude-standard -z \
-  | git add --pathspec-from-file=- --pathspec-file-nul
+# 未追跡（.gitignore尊重）を NUL 区切りで安全に追加。ゼロ件時は静かにスキップ。
+if bytes=$(git ls-files -o --exclude-standard -z | wc -c); then
+  if [ "$bytes" -gt 0 ]; then
+    git ls-files -o --exclude-standard -z \
+      | git add --pathspec-from-file=- --pathspec-file-nul
+  else
+    echo "[pre-commit] no untracked files."
+  fi
+fi
+
+###############################################################################
+# ② 生成：ここまでで新規 .kif も index に載っている前提で再生成
+###############################################################################
+echo "[pre-commit] regenerate artifacts..."
+"$PY" generate_kifu_list.py
+"$PY" generate_index_with_search.py
 
 # 生成物の差分があれば保険でステージ
 if ! git diff --quiet -- data/kifu_list.json 2>/dev/null; then
@@ -43,11 +55,12 @@ if ! git diff --quiet -- index.html 2>/dev/null; then
   git add -- index.html || true
 fi
 
-# デバッグ：いまステージされている一覧を表示
+###############################################################################
+# デバッグ表示＆空コミット防止
+###############################################################################
 echo "[pre-commit] staged now:"
 git diff --cached --name-status || true
 
-# 空コミット防止
 if git diff --cached --quiet; then
   echo "[pre-commit] No staged changes. Abort commit." >&2
   exit 1

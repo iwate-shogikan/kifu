@@ -7,18 +7,22 @@ Set-Location (git rev-parse --show-toplevel)
 git add -A -- ':!githooks/**'
 
 # 2) 生成（kifu_list.json / index.html）
-#    ※ python が python3 の場合は適宜修正
 python generate_kifu_list.py
 python generate_index_with_search.py
 
 # 3) 生成物を保険でステージ
 git add -- data/kifu_list.json index.html
 
-# 4) 何もなければ終了
+# 4) 何もステージされていなければ終了
 if (git diff --cached --quiet) {
   Write-Warning "No staged changes. Abort."
   exit 1
 }
 
-# 5) pre-commit をスキップしてコミット（--no-verify）
+# 5) pre-commit をスキップしてコミット
 git commit --no-verify -m $Message
+
+# 6) そのまま GitHub（追跡先）へ push
+Write-Host "[INFO] pushing to remote..." -ForegroundColor Cyan
+git push
+
